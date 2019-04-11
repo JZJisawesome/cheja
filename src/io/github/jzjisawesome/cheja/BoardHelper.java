@@ -115,8 +115,31 @@ public class BoardHelper//everything in here should be static; only local vars
         return false;//placeholder
     }
     
-    public static ArrayList validMoves(Board board, byte y, byte x)//todo
+    public static ArrayList validMoves(Board board, Board.Piece piece, byte y, byte x)//todo
     {
         return new ArrayList();//placeholder
+    }
+    
+    public static boolean validMove(Board board, Board.Piece piece, byte fromY, byte fromX, byte toY, byte toX)//todo
+    {
+        return false;//placeholder
+    }
+    
+    //not whether a move would be smart or not; just the function does not check if the move would be valid
+    public static void dumbMove(Board board, Board.Piece piece, byte fromY, byte fromX, byte toY, byte toX)//todo
+    {
+        //placeholder
+    }
+    
+    //smarter move function that checks if move is valid before moving
+    public static boolean safeMove(Board board, Board.Piece piece, byte fromY, byte fromX, byte toY, byte toX)
+    {
+        //check whether move is valid once
+        boolean moveIsValid = validMove(board, piece, fromY, fromX, toY, toX);
+        
+        if (moveIsValid)//move if it is valid
+            dumbMove(board, piece, fromY, fromX, toY, toX);
+        
+        return moveIsValid;//return whether the move was valid and therefore that it was moved
     }
 }

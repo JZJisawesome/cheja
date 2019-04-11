@@ -44,7 +44,7 @@ public class Board//chess board storage class
     
     //8 by 8 array of pieces
     //note when accessing this array coordinates are [y][x]
-    Piece board[][] = //fixme ensure dimentions can only be 8 * 8
+    Piece board[][] =// new Piece[8][8]//fixme ensure dimentions can only be 8 * 8
     {
         {new Piece(PieceType.rook, false), new Piece(PieceType.knight, false), new Piece(PieceType.bishop, false), new Piece(PieceType.queen, false), new Piece(PieceType.king, false), new Piece(PieceType.bishop, false), new Piece(PieceType.knight, false), new Piece(PieceType.rook, false)},
         {new Piece(PieceType.pawn, false), new Piece(PieceType.pawn, false), new Piece(PieceType.pawn, false), new Piece(PieceType.pawn, false), new Piece(PieceType.pawn, false), new Piece(PieceType.pawn, false), new Piece(PieceType.pawn, false), new Piece(PieceType.pawn, false)},
@@ -56,8 +56,9 @@ public class Board//chess board storage class
         {new Piece(PieceType.rook, true), new Piece(PieceType.knight, true), new Piece(PieceType.bishop, true), new Piece(PieceType.queen, true), new Piece(PieceType.king, true), new Piece(PieceType.bishop, true), new Piece(PieceType.knight, true), new Piece(PieceType.rook, true)},
     };
     
-    //constructors//fixme probably should initilize board array here
-    Board() {}
+    //constructors
+    Board() {}//fixme probably should initilize board array here
+    
     Board(Piece brd[][])//fixme ensure only 8 * 8 sized arrays can be assigned
     {
         this.board = brd;
