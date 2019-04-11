@@ -22,19 +22,20 @@
 */
 package io.github.jzjisawesome.cheja;
 
-public class Cheja
+public class Cheja//main program
 {
     
-    static Board board = new Board();
-
+    static Board board = new Board();//create a new chess board to play
 
     public static void main(String[] args)
     {
-        System.out.println("\t      Cheja\n");
+        System.out.println("\t    ♞Cheja♞\n");
         
         System.out.println(" Note: colours may look reversed\n if your terminal is dark themed");
         
         BoardHelper.printBoard(board);
+        
+        System.out.println("\nGoodbye!");
     }
     
 }

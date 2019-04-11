@@ -22,26 +22,29 @@
 */
 package io.github.jzjisawesome.cheja;
 
-public class Board
+public class Board//chess board storage class
 {
-    public enum PieceType
+    public static enum PieceType
     {
         none, pawn, knight, rook, bishop, queen, king
     };
     
-    public class Piece
+    public static class Piece
     {
-        Piece(PieceType t, boolean isW)
+        Piece(PieceType t, boolean isW)//constructor
         {
             this.type = t;
             this.isWhite = isW;
         }
         
+        //a chess piece is both a certain type and a either black or white
         public PieceType type;
-        public boolean isWhite;
+        public boolean isWhite;//should be ignored for the "none" PieceType
     }
     
-    Piece board[][] = 
+    //8 by 8 array of pieces
+    //note when accessing this array coordinates are [y][x]
+    Piece board[][] = //fixme ensure dimentions can only be 8 * 8
     {
         {new Piece(PieceType.rook, false), new Piece(PieceType.knight, false), new Piece(PieceType.bishop, false), new Piece(PieceType.queen, false), new Piece(PieceType.king, false), new Piece(PieceType.bishop, false), new Piece(PieceType.knight, false), new Piece(PieceType.rook, false)},
         {new Piece(PieceType.pawn, false), new Piece(PieceType.pawn, false), new Piece(PieceType.pawn, false), new Piece(PieceType.pawn, false), new Piece(PieceType.pawn, false), new Piece(PieceType.pawn, false), new Piece(PieceType.pawn, false), new Piece(PieceType.pawn, false)},
@@ -52,4 +55,11 @@ public class Board
         {new Piece(PieceType.pawn, true), new Piece(PieceType.pawn, true), new Piece(PieceType.pawn, true), new Piece(PieceType.pawn, true), new Piece(PieceType.pawn, true), new Piece(PieceType.pawn, true), new Piece(PieceType.pawn, true), new Piece(PieceType.pawn, true)},
         {new Piece(PieceType.rook, true), new Piece(PieceType.knight, true), new Piece(PieceType.bishop, true), new Piece(PieceType.queen, true), new Piece(PieceType.king, true), new Piece(PieceType.bishop, true), new Piece(PieceType.knight, true), new Piece(PieceType.rook, true)},
     };
+    
+    //constructors//fixme probably should initilize board array here
+    Board() {}
+    Board(Piece brd[][])//fixme ensure only 8 * 8 sized arrays can be assigned
+    {
+        this.board = brd;
+    }
 }

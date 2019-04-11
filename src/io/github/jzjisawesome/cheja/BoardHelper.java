@@ -28,61 +28,20 @@ public class BoardHelper//everything in here should be static; only local vars
 {
     public static void printBoard(Board board)
     {
-        System.out.println("┏━━━┳━━━┳━━━┳━━━┳━━━┳━━━┳━━━┳━━━┓");
-        for (int i = 0; i < 8; ++i)
+        System.out.println("┏━━━┳━━━┳━━━┳━━━┳━━━┳━━━┳━━━┳━━━┓");//start of the board
+        for (int i = 0; i < 8; ++i)//loop for coloums
         {
-            System.out.print("┃ ");
-            for (int j = 0; j < 8; ++j)
+            System.out.print("┃ ");//print the left side of the board
+            for (int j = 0; j < 8; ++j)//loop for rows
             {
-                char piece;
-
+                char piece;//stores character to print to represent a chess piece
+                
+                //checks type of piece here and varies it depending on its colour later
                 switch (board.board[i][j].type)
                 {
-                    /*
                     case bishop:
                     {
-                        piece = 'b';
-                        break;
-                    }
-                    case king:
-                    {
-                        piece = 'K';
-                        break;
-                    }
-                    case knight:
-                    {
-                        piece = 'k';
-                        break;
-                    }
-                    case pawn:
-                    {
-                        piece = 'p';
-                        break;
-                    }
-                    case queen:
-                    {
-                        piece = 'Q';
-                        break;
-                    }
-                    case rook:
-                    {
-                        piece = 'r';
-                        break;
-                    }
-                    case none:
-                    {
-                        piece = ' ';
-                        break;
-                    }
-                    default:
-                    {
-                        piece = '?';
-                        break;
-                    }
-                    */
-                    
-                    case bishop:
-                    {
+                        //eg.   if white  ................. w else b coloured tile
                         piece = board.board[i][j].isWhite ? '♗' : '♝';
                         break;
                     }
@@ -125,39 +84,39 @@ public class BoardHelper//everything in here should be static; only local vars
 
                 System.out.print(piece);
                 
-                System.out.print(" ┃ ");
+                System.out.print(" ┃ ");//close the right side of the tile
             }
             
             if (i < 7)//all except before last line where special bottom characters will be used
             {
                 System.out.println();
-                System.out.print("┣━━━╋━━━╋━━━╋━━━╋━━━╋━━━╋━━━╋━━━┫");
+                System.out.print("┣━━━╋━━━╋━━━╋━━━╋━━━╋━━━╋━━━╋━━━┫");//seperate new rows of tiles
             }
             
             
             System.out.println();
         }
         
-        System.out.println("┗━━━┻━━━┻━━━┻━━━┻━━━┻━━━┻━━━┻━━━┛");
+        System.out.println("┗━━━┻━━━┻━━━┻━━━┻━━━┻━━━┻━━━┻━━━┛");//end of the board
     }
     
-    public static void save(String saveFile, Board board)
+    public static void save(String saveFile, Board board)//todo
     {
-        
+        //placeholder
     }
     
-    public static void load(String saveFile, Board board)
+    public static void load(String saveFile, Board board)//todo
     {
-        
+        //placeholder
     }
     
-    public static boolean hasWon(Board board, boolean white)
+    public static boolean hasWon(Board board, boolean white)//todo
     {
-        return false;
+        return false;//placeholder
     }
     
-    public static ArrayList validMoves(Board board, byte y, byte x)
+    public static ArrayList validMoves(Board board, byte y, byte x)//todo
     {
-        return new ArrayList();
+        return new ArrayList();//placeholder
     }
 }
