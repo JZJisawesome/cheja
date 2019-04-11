@@ -28,14 +28,17 @@ public class BoardHelper//everything in here should be static; only local vars
 {
     public static void printBoard(Board board)
     {
+        System.out.println("┏━━━┳━━━┳━━━┳━━━┳━━━┳━━━┳━━━┳━━━┓");
         for (int i = 0; i < 8; ++i)
         {
+            System.out.print("┃ ");
             for (int j = 0; j < 8; ++j)
             {
                 char piece;
 
                 switch (board.board[i][j].type)
                 {
+                    /*
                     case bishop:
                     {
                         piece = 'b';
@@ -76,13 +79,66 @@ public class BoardHelper//everything in here should be static; only local vars
                         piece = '?';
                         break;
                     }
+                    */
+                    
+                    case bishop:
+                    {
+                        piece = board.board[i][j].isWhite ? '♗' : '♝';
+                        break;
+                    }
+                    case king:
+                    {
+                        piece = board.board[i][j].isWhite ? '♔' : '♚';
+                        break;
+                    }
+                    case knight:
+                    {
+                        piece = board.board[i][j].isWhite ? '♘' : '♞';
+                        break;
+                    }
+                    case pawn:
+                    {
+                        piece = board.board[i][j].isWhite ? '♙' : '♟';
+                        break;
+                    }
+                    case queen:
+                    {
+                        piece = board.board[i][j].isWhite ? '♕' : '♛';
+                        break;
+                    }
+                    case rook:
+                    {
+                        piece = board.board[i][j].isWhite ? '♖' : '♜';
+                        break;
+                    }
+                    case none:
+                    {
+                        piece = ' ';
+                        break;
+                    }
+                    default:
+                    {
+                        piece = '?';
+                        break;
+                    }
                 }
 
                 System.out.print(piece);
+                
+                System.out.print(" ┃ ");
             }
-
+            
+            if (i < 7)//all except before last line where special bottom characters will be used
+            {
+                System.out.println();
+                System.out.print("┣━━━╋━━━╋━━━╋━━━╋━━━╋━━━╋━━━╋━━━┫");
+            }
+            
+            
             System.out.println();
         }
+        
+        System.out.println("┗━━━┻━━━┻━━━┻━━━┻━━━┻━━━┻━━━┻━━━┛");
     }
     
     public static void save(String saveFile, Board board)

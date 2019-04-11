@@ -30,7 +30,9 @@ public class Cheja
 
     public static void main(String[] args)
     {
-        System.out.println("Cheja\n");
+        System.out.println("\t      Cheja\n");
+        
+        System.out.println(" Note: colours may look reversed\n if your terminal is dark themed");
         
         BoardHelper.printBoard(board);
     }
