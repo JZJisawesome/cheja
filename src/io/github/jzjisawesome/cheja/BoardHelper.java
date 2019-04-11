@@ -22,7 +22,9 @@
 */
 package io.github.jzjisawesome.cheja;
 
-public class BoardHelper
+import java.util.ArrayList;
+
+public class BoardHelper//everything in here should be static; only local vars
 {
     public static void printBoard(Board board)
     {
@@ -56,7 +58,7 @@ public class BoardHelper
                     }
                     case queen:
                     {
-                        piece = 'q';
+                        piece = 'Q';
                         break;
                     }
                     case rook:
@@ -81,5 +83,25 @@ public class BoardHelper
 
             System.out.println();
         }
-    };
+    }
+    
+    public static void save(String saveFile, Board board)
+    {
+        
+    }
+    
+    public static void load(String saveFile, Board board)
+    {
+        
+    }
+    
+    public static boolean hasWon(Board board, boolean white)
+    {
+        return false;
+    }
+    
+    public static ArrayList validMoves(Board board, byte y, byte x)
+    {
+        return new ArrayList();
+    }
 }
