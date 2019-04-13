@@ -58,6 +58,8 @@ public class Board//chess board storage class
         {new Piece(PieceType.rook, true), new Piece(PieceType.knight, true), new Piece(PieceType.bishop, true), new Piece(PieceType.queen, true), new Piece(PieceType.king, true), new Piece(PieceType.bishop, true), new Piece(PieceType.knight, true), new Piece(PieceType.rook, true)},
     };
     
+    boolean whiteTurn = true;//white starts first in chess
+    
     //constructors
     Board() {}//fixme probably should initilize board array here
     
@@ -159,6 +161,8 @@ public class Board//chess board storage class
         return false;//placeholder
     }
     
+    //will probably just run over the whole board checking which tiles would be valid to move to
+    //effecience can be improved later
     public static ArrayList validMoves(byte y, byte x)//todo
     {
         return new ArrayList();//placeholder
@@ -176,6 +180,7 @@ public class Board//chess board storage class
     }
     
     //smarter move function that checks if move is valid before moving
+    //note: won't work until dumbMove and validMove are implemented
     public boolean safeMove(byte fromY, byte fromX, byte toY, byte toX)
     {
         //check whether move is valid once
