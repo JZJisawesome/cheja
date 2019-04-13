@@ -66,7 +66,7 @@ public class Board//chess board storage class
     //8 by 8 array of pieces
     //note when accessing this array coordinates are [y][x]
     //todo: make private
-    Piece board[][] =// new Piece[8][8]//fixme ensure dimentions can only be 8 * 8
+    private Piece board[][] =// new Piece[8][8]//fixme ensure dimentions can only be 8 * 8
     {
         {new Piece(PieceType.rook, false), new Piece(PieceType.knight, false), new Piece(PieceType.bishop, false), new Piece(PieceType.queen, false), new Piece(PieceType.king, false), new Piece(PieceType.bishop, false), new Piece(PieceType.knight, false), new Piece(PieceType.rook, false)},
         {new Piece(PieceType.pawn, false), new Piece(PieceType.pawn, false), new Piece(PieceType.pawn, false), new Piece(PieceType.pawn, false), new Piece(PieceType.pawn, false), new Piece(PieceType.pawn, false), new Piece(PieceType.pawn, false), new Piece(PieceType.pawn, false)},
@@ -78,7 +78,7 @@ public class Board//chess board storage class
         {new Piece(PieceType.rook, true), new Piece(PieceType.knight, true), new Piece(PieceType.bishop, true), new Piece(PieceType.queen, true), new Piece(PieceType.king, true), new Piece(PieceType.bishop, true), new Piece(PieceType.knight, true), new Piece(PieceType.rook, true)},
     };
     
-    boolean whiteTurn = true;//white starts first in chess
+    private boolean whiteTurn = true;//white starts first in chess
     
     //constructors
     Board() {}//fixme probably should initilize board array here
@@ -86,6 +86,26 @@ public class Board//chess board storage class
     Board(Piece brd[][])//fixme ensure only 8 * 8 sized arrays can be assigned
     {
         this.board = brd;
+    }
+
+    public Piece[][] getBoard()
+    {
+        return board;
+    }
+    
+    public Piece getPiece(int y, int x)
+    {
+        if (y <= 7 || y >= 0 || x <= 7 || x >= 0)
+        {
+            return board[y][x];
+        }
+        else
+            throw new IllegalArgumentException("coordinates out of bounds");
+    }
+
+    public boolean isWhiteTurn()
+    {
+        return whiteTurn;
     }
     
     //public functions
@@ -328,7 +348,7 @@ public class Board//chess board storage class
     {
         //note; cannot depend on any other function as almost all others depend on it
         
-        if (move.fromX > 7 || move.fromX < 0 || move.fromY > 7 || move.fromY < 0 || move.toX > 7 || move.toX < 0 || move.toY > 7 || move.toY < 0)
+        if (move.fromY <= 7 || move.fromY >= 0 || move.fromX <= 7 || move.fromX >= 0 || move.toY <= 7 || move.toY >= 0 || move.toX <= 7 || move.toX >= 0)
             return false;
         //if the coordinates are good, then we do deeper checks
         
@@ -353,16 +373,6 @@ public class Board//chess board storage class
         }
     }
     
-    public void regMove(byte fromY, byte fromX, byte toY, byte toX)//todo
-    {
-        //placeholder
-    }
-    
-    public void castle(byte fromY, byte fromX, byte toY, byte toX)//todo
-    {
-        //placeholder
-    }
-    
     //will look at 4 coordinates and create a Move, detecting it's type in the process
     //throws exception if move would be invalid
     public Move createMove(byte fromY, byte fromX, byte toY, byte toX)
@@ -375,5 +385,18 @@ public class Board//chess board storage class
         }
         else
             throw new IllegalArgumentException("createMove(move) invalid");
+    }
+    
+    
+    //private functions
+    
+    private void regMove(byte fromY, byte fromX, byte toY, byte toX)//todo
+    {
+        //placeholder
+    }
+    
+    private void castle(byte fromY, byte fromX, byte toY, byte toX)//todo
+    {
+        //placeholder
     }
 }
