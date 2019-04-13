@@ -249,23 +249,19 @@ public class Board//chess board storage class
     {
         return false;//placeholder
     }
-    
-    //will probably just run over the whole board checking which tiles would be valid to move to
-    //effecience can be improved later
-    //will be array of Moves
-    public static ArrayList validMoves(byte y, byte x)//todo
-    {
-        return new ArrayList();//placeholder
-    }
 
     //can move any piece and follow any Move.MoveType
     //smart; returns if move was sucessfull
     public boolean move(byte fromY, byte fromX, byte toY, byte toX)
     {
-        if (this.validMove(fromY, fromX, toY, toX))
-            return this.move(this.createMove(fromY, fromX, toY, toX));
-        else
+        try
+        {
+            return this.move(this.createMove(fromY, fromX, toY, toX));//create the move type and run the other move overload
+        }
+        catch (IllegalArgumentException e)
+        {
             return false;
+        }
     }
     
     //can move any piece and follow any Move.MoveType
@@ -278,7 +274,7 @@ public class Board//chess board storage class
             {
                 case reg:
                 {
-                    regMove(move.fromY, move.fromX, move.toY, move.toX);//safty of move already checked
+                    regMove(move.fromY, move.fromX, move.toY, move.toX);//safty of move already checked at start of function
                     return true;
                     //break;//unreachable anaways
                 }
@@ -315,21 +311,23 @@ public class Board//chess board storage class
         public MoveType moveType;//type of move this will be
     }
     
-    
-
-        
-    //will need to try all move types to and from that coodinate and see if it is possible
-    public boolean validMove(byte fromY, byte fromX, byte toY, byte toX)//todo
-    {
-        return false;//placeholder
-    }
-    
     //probably should work on this instead
     public boolean validMove(Move move)//todo
     {
-        return false;//placeholder
+        switch (move.moveType)
+        {
+            case reg:
+            {
+                //placeholder
+            }
+            case castle:
+            {
+                //placeholder
+            }
+            default:
+                return false;
+        }
     }
-    
     
     //these two should be unfavoured over smarter move functions above (for direct use)
     //function does not check if the move would be valid
@@ -338,24 +336,25 @@ public class Board//chess board storage class
         //placeholder
     }
     
-    //smarter move function that checks if move is valid before moving
-    //note: won't work until regMove and validMove are implemented
-    //only regular moves
-    public boolean safeRegMove(byte fromY, byte fromX, byte toY, byte toX)
-    {
-        //check whether move is valid once
-        boolean moveIsValid = this.validMove(fromY, fromX, toY, toX);
-        
-        if (moveIsValid)//move if it is valid
-            this.regMove(fromY, fromX, toY, toX);
-        
-        return moveIsValid;//return whether the move was valid and therefore that it was moved
-    }
-    
     //will look at 4 coordinates and create a Move, detecting it's type in the process
     //todo: throw exception if move would be invalid
     public Move createMove(byte fromY, byte fromX, byte toY, byte toX)
     {
-        return new Move((byte)0, (byte)0, (byte)0, (byte)0, Move.MoveType.reg);//placeholder
+        Move newMove = new Move(fromY, fromX, toY, toX, Move.MoveType.reg);//placeholder, not all moves are regular
+        
+        if (this.validMove(newMove))
+        {
+            return newMove;
+        }
+        else
+            throw new IllegalArgumentException("createMove(move) invalid");
+    }
+    
+    //will probably just run over the whole board checking which tiles would be valid to move to
+    //effecience can be improved later
+    //will be array of Moves
+    public static ArrayList validMoves(byte y, byte x)//todo
+    {
+        return new ArrayList();//placeholder
     }
 }
