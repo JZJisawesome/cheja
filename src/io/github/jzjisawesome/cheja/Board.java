@@ -22,8 +22,6 @@
 */
 package io.github.jzjisawesome.cheja;
 
-import java.util.ArrayList;
-
 public class Board//chess board storage class
 {
     public static enum PieceType
@@ -274,12 +272,14 @@ public class Board//chess board storage class
             {
                 case reg:
                 {
-                    regMove(move.fromY, move.fromX, move.toY, move.toX);//safty of move already checked at start of function
+                    this.regMove(move.fromY, move.fromX, move.toY, move.toX);//safty of move already checked at start of function
                     return true;
                     //break;//unreachable anaways
                 }
                 case castle:
                 {
+                    this.castle(move.fromY, move.fromX, move.toY, move.toX);//safty of move already checked at start of function
+                    return true;
                     //placeholder
                 }
                 default:
@@ -312,6 +312,7 @@ public class Board//chess board storage class
     }
     
     //probably should work on this instead
+    //can be used repititively on all tiles of board to find all valid places to move
     public boolean validMove(Move move)//todo
     {
         switch (move.moveType)
@@ -322,16 +323,25 @@ public class Board//chess board storage class
             }
             case castle:
             {
-                //placeholder
+                if ((this.board[move.fromX][move.fromY].type) == PieceType.king)
+                {
+                    //placeholder//make sure the castle will be valid
+                }
+                else
+                    return false;
+                
             }
             default:
                 return false;
         }
     }
     
-    //these two should be unfavoured over smarter move functions above (for direct use)
-    //function does not check if the move would be valid
     public void regMove(byte fromY, byte fromX, byte toY, byte toX)//todo
+    {
+        //placeholder
+    }
+    
+    public void castle(byte fromY, byte fromX, byte toY, byte toX)//todo
     {
         //placeholder
     }
@@ -340,7 +350,7 @@ public class Board//chess board storage class
     //todo: throw exception if move would be invalid
     public Move createMove(byte fromY, byte fromX, byte toY, byte toX)
     {
-        Move newMove = new Move(fromY, fromX, toY, toX, Move.MoveType.reg);//placeholder, not all moves are regular
+        Move newMove = new Move(fromY, fromX, toY, toX, Move.MoveType.reg);//placeholder, not all moves are regular but this is only reg
         
         if (this.validMove(newMove))
         {
@@ -348,13 +358,5 @@ public class Board//chess board storage class
         }
         else
             throw new IllegalArgumentException("createMove(move) invalid");
-    }
-    
-    //will probably just run over the whole board checking which tiles would be valid to move to
-    //effecience can be improved later
-    //will be array of Moves
-    public static ArrayList validMoves(byte y, byte x)//todo
-    {
-        return new ArrayList();//placeholder
     }
 }
