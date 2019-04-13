@@ -70,9 +70,10 @@ public class Board//chess board storage class
     
     public void print()
     {
-        System.out.println("┏━━━┳━━━┳━━━┳━━━┳━━━┳━━━┳━━━┳━━━┓");//start of the board
+        System.out.println(" ┏━━━┳━━━┳━━━┳━━━┳━━━┳━━━┳━━━┳━━━┓");//start of the board
         for (int i = 0; i < 8; ++i)//loop for coloums
         {
+            System.out.print(8 - i);//print numbers for rows
             System.out.print("┃ ");//print the left side of the board
             for (int j = 0; j < 8; ++j)//loop for rows
             {
@@ -132,14 +133,15 @@ public class Board//chess board storage class
             if (i < 7)//all except before last line where special bottom characters will be used
             {
                 System.out.println();
-                System.out.print("┣━━━╋━━━╋━━━╋━━━╋━━━╋━━━╋━━━╋━━━┫");//seperate new rows of tiles
+                System.out.print(" ┣━━━╋━━━╋━━━╋━━━╋━━━╋━━━╋━━━╋━━━┫");//seperate new rows of tiles
             }
             
             
             System.out.println();
         }
         
-        System.out.println("┗━━━┻━━━┻━━━┻━━━┻━━━┻━━━┻━━━┻━━━┛");//end of the board
+        System.out.println(" ┗━━━┻━━━┻━━━┻━━━┻━━━┻━━━┻━━━┻━━━┛");//end of the board
+        System.out.println("   a   b   c   d   e   f   g   h");//print letters for coloums
     }
     
     public void save(String saveFile)//todo
