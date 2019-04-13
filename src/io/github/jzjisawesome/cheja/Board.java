@@ -46,6 +46,7 @@ public class Board//chess board storage class
     
     //8 by 8 array of pieces
     //note when accessing this array coordinates are [y][x]
+    //todo: make private
     Piece board[][] =// new Piece[8][8]//fixme ensure dimentions can only be 8 * 8
     {
         {new Piece(PieceType.rook, false), new Piece(PieceType.knight, false), new Piece(PieceType.bishop, false), new Piece(PieceType.queen, false), new Piece(PieceType.king, false), new Piece(PieceType.bishop, false), new Piece(PieceType.knight, false), new Piece(PieceType.rook, false)},
@@ -251,33 +252,24 @@ public class Board//chess board storage class
     
     //will probably just run over the whole board checking which tiles would be valid to move to
     //effecience can be improved later
+    //will be array of Moves
     public static ArrayList validMoves(byte y, byte x)//todo
     {
         return new ArrayList();//placeholder
     }
-    
-    public boolean validMove(byte fromY, byte fromX, byte toY, byte toX)//todo
+
+    //can move any piece and follow any Move.MoveType
+    //smart; returns if move was sucessfull
+    public boolean move(byte fromY, byte fromX, byte toY, byte toX)
     {
         return false;//placeholder
     }
     
-    //not whether a move would be smart or not; just the function does not check if the move would be valid
-    public void dumbMove(byte fromY, byte fromX, byte toY, byte toX)//todo
+    //can move any piece and follow any Move.MoveType
+    //smart; returns if move was sucessfull
+    public boolean move(Move move)
     {
-        //placeholder
-    }
-    
-    //smarter move function that checks if move is valid before moving
-    //note: won't work until dumbMove and validMove are implemented
-    public boolean safeMove(byte fromY, byte fromX, byte toY, byte toX)
-    {
-        //check whether move is valid once
-        boolean moveIsValid = this.validMove(fromY, fromX, toY, toX);
-        
-        if (moveIsValid)//move if it is valid
-            this.dumbMove(fromY, fromX, toY, toX);
-        
-        return moveIsValid;//return whether the move was valid and therefore that it was moved
+        return false;//placeholder
     }
         
     public static class Move//by convention this class should always contain info about a move that is valid
@@ -293,11 +285,55 @@ public class Board//chess board storage class
         
         public static enum MoveType//move function will decide how it will work based on this
         {
-            reg, castle,//todo: add other move oddities
+            reg, castle,//todo: add other move types
         }
         
         //coordinates to and from
         public int fromX, fromY, toX, toY;
         public MoveType moveType;//type of move this will be
+    }
+    
+    
+    
+    
+    //these should be unfavoured over smarter move functions above
+        
+    //will need to try all move types to and from that coodinate and see if it is possible
+    public boolean validMove(byte fromY, byte fromX, byte toY, byte toX)//todo
+    {
+        return false;//placeholder
+    }
+    
+    //probably should work on this instead
+    public boolean validMove(Move move)//todo
+    {
+        return false;//placeholder
+    }
+    
+    //function does not check if the move would be valid
+    public void regMove(byte fromY, byte fromX, byte toY, byte toX)//todo
+    {
+        //placeholder
+    }
+    
+    //smarter move function that checks if move is valid before moving
+    //note: won't work until regMove and validMove are implemented
+    //only regular moves
+    public boolean safeRegMove(byte fromY, byte fromX, byte toY, byte toX)
+    {
+        //check whether move is valid once
+        boolean moveIsValid = this.validMove(fromY, fromX, toY, toX);
+        
+        if (moveIsValid)//move if it is valid
+            this.regMove(fromY, fromX, toY, toX);
+        
+        return moveIsValid;//return whether the move was valid and therefore that it was moved
+    }
+    
+    //will look at 4 coordinates and create a Move, detecting it's type in the process
+    //todo: throw exception if move would be invalid
+    public Move createMove(byte fromY, byte fromX, byte toY, byte toX)
+    {
+        return new Move(0, 0, 0, 0, Move.MoveType.reg);//placeholder
     }
 }
