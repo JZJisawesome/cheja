@@ -72,6 +72,7 @@ public class Board//chess board storage class
     
     public void print()
     {
+        System.out.println("   a   b   c   d   e   f   g   h");//print letters for coloums
         System.out.println(" ┏━━━┳━━━┳━━━┳━━━┳━━━┳━━━┳━━━┳━━━┓");//start of the board
         for (int i = 0; i < 8; ++i)//loop for coloums
         {
@@ -129,7 +130,12 @@ public class Board//chess board storage class
 
                 System.out.print(piece);
                 
-                System.out.print(" ┃ ");//close the right side of the tile
+                System.out.print(" ┃");//close the right side of the tile
+                
+                if (j < 7)
+                    System.out.print(" ");
+                else
+                    System.out.print(8 - i);//print numbers for rows
             }
             
             if (i < 7)//all except before last line where special bottom characters will be used
