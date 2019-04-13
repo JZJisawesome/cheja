@@ -22,10 +22,11 @@
 */
 package io.github.jzjisawesome.cheja;
 
-public class Cheja//main program
+public final class Cheja//main program
 {
+    public static final String version = "0.0.0";
     
-    static Board board = new Board();//create a new chess board to play
+    private static Board board = new Board();//create a new chess board to play
 
     public static void main(String[] args)
     {
