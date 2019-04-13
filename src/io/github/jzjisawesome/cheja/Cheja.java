@@ -33,7 +33,7 @@ public class Cheja//main program
         
         System.out.println(" Note: colours may look reversed\n if your terminal is dark themed");
         
-        BoardHelper.printBoard(board);
+        board.print();
         
         System.out.println("\nGoodbye!");
     }

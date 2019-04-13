@@ -22,6 +22,8 @@
 */
 package io.github.jzjisawesome.cheja;
 
+import java.util.ArrayList;
+
 public class Board//chess board storage class
 {
     public static enum PieceType
@@ -62,5 +64,124 @@ public class Board//chess board storage class
     Board(Piece brd[][])//fixme ensure only 8 * 8 sized arrays can be assigned
     {
         this.board = brd;
+    }
+    
+    //public functions
+    
+    public void print()
+    {
+        System.out.println("┏━━━┳━━━┳━━━┳━━━┳━━━┳━━━┳━━━┳━━━┓");//start of the board
+        for (int i = 0; i < 8; ++i)//loop for coloums
+        {
+            System.out.print("┃ ");//print the left side of the board
+            for (int j = 0; j < 8; ++j)//loop for rows
+            {
+                char piece;//stores character to print to represent a chess piece
+                
+                //checks type of piece here and varies it depending on its colour later
+                switch (this.board[i][j].type)
+                {
+                    case bishop:
+                    {
+                        //eg.   if white  ................. w else b coloured tile
+                        piece = this.board[i][j].isWhite ? '♗' : '♝';
+                        break;
+                    }
+                    case king:
+                    {
+                        piece = this.board[i][j].isWhite ? '♔' : '♚';
+                        break;
+                    }
+                    case knight:
+                    {
+                        piece = this.board[i][j].isWhite ? '♘' : '♞';
+                        break;
+                    }
+                    case pawn:
+                    {
+                        piece = this.board[i][j].isWhite ? '♙' : '♟';
+                        break;
+                    }
+                    case queen:
+                    {
+                        piece = this.board[i][j].isWhite ? '♕' : '♛';
+                        break;
+                    }
+                    case rook:
+                    {
+                        piece = this.board[i][j].isWhite ? '♖' : '♜';
+                        break;
+                    }
+                    case none:
+                    {
+                        piece = ' ';
+                        break;
+                    }
+                    default:
+                    {
+                        piece = '?';
+                        break;
+                    }
+                }
+
+                System.out.print(piece);
+                
+                System.out.print(" ┃ ");//close the right side of the tile
+            }
+            
+            if (i < 7)//all except before last line where special bottom characters will be used
+            {
+                System.out.println();
+                System.out.print("┣━━━╋━━━╋━━━╋━━━╋━━━╋━━━╋━━━╋━━━┫");//seperate new rows of tiles
+            }
+            
+            
+            System.out.println();
+        }
+        
+        System.out.println("┗━━━┻━━━┻━━━┻━━━┻━━━┻━━━┻━━━┻━━━┛");//end of the board
+    }
+    
+    public void save(String saveFile)//todo
+    {
+        //placeholder
+    }
+    
+    public void load(String saveFile)//todo
+    {
+        //placeholder
+    }
+    
+    public boolean hasWon(boolean checkWhite)//todo
+    {
+        return false;//placeholder
+    }
+    
+    public static ArrayList validMoves(Board.Piece piece, byte y, byte x)//todo
+    {
+        return new ArrayList();//placeholder
+    }
+    
+    public boolean validMove(Board.Piece piece, byte fromY, byte fromX, byte toY, byte toX)//todo
+    {
+        return false;//placeholder
+    }
+    
+    //not whether a move would be smart or not; just the function does not check if the move would be valid
+    public void dumbMove(Board.Piece piece, byte fromY, byte fromX, byte toY, byte toX)//todo
+    {
+        //placeholder
+    }
+    
+    //smarter move function that checks if move is valid before moving
+    public boolean safeMove(Board.Piece piece, byte fromY, byte fromX, byte toY, byte toX)
+    {
+        //check whether move is valid once
+        boolean moveIsValid = this.validMove(piece, fromY, fromX, toY, toX);
+        
+        if (moveIsValid)//move if it is valid
+            this.dumbMove(piece, fromY, fromX, toY, toX);
+        
+        return moveIsValid;//return whether the move was valid and therefore that it was moved
     }
 }

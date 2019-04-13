@@ -24,6 +24,13 @@ package io.github.jzjisawesome.cheja;
 
 import java.util.ArrayList;
 
+
+//decepreated; use Board member functions instead (yes i know i spelt that d word wrong)
+//In retrospect, it makes more sense to have helper/management functions for an
+//class to be part of that class; a mistake I made here and in 15Slide.
+//Lucically there has been minimal development of cheja so far so this move should be relatively painless
+
+
 public class BoardHelper//everything in here should be static; only local vars
 {
     public static void printBoard(Board board)
