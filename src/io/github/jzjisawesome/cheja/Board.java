@@ -41,6 +41,27 @@ public class Board//chess board storage class
         public PieceType type;
         public boolean isWhite;//should be ignored for the "none" PieceType
     }
+            
+    public static class Move//by convention this class should always contain info about a move that is valid
+    {
+        public Move(byte fromX, byte fromY, byte toX, byte toY, MoveType moveType)//constructor
+        {
+            this.fromX = fromX;
+            this.fromY = fromY;
+            this.toX = toX;
+            this.toY = toY;
+            this.moveType = moveType;
+        }
+        
+        public static enum MoveType//move function will decide how it will work based on this
+        {
+            reg, castle,//todo: add other move types
+        }
+        
+        //coordinates to and from
+        public byte fromY, fromX, toY, toX;
+        public MoveType moveType;//type of move this will be
+    }
     
     //8 by 8 array of pieces
     //note when accessing this array coordinates are [y][x]
@@ -233,17 +254,17 @@ public class Board//chess board storage class
         System.out.println("   h   g   f   e   d   c   b   a");//print letters for coloums
     }
     
-    public void save(String saveFile)//todo
+    public void save(String saveFile)
     {
         //placeholder
     }
     
-    public void load(String saveFile)//todo
+    public void load(String saveFile)
     {
         //placeholder
     }
     
-    public boolean hasWon(boolean checkWhite)//todo
+    public boolean hasWon(boolean checkWhite)
     {
         return false;//placeholder
     }
@@ -289,27 +310,6 @@ public class Board//chess board storage class
         else
             return false;
     }
-        
-    public static class Move//by convention this class should always contain info about a move that is valid
-    {
-        public Move(byte fromX, byte fromY, byte toX, byte toY, MoveType moveType)//constructor
-        {
-            this.fromX = fromX;
-            this.fromY = fromY;
-            this.toX = toX;
-            this.toY = toY;
-            this.moveType = moveType;
-        }
-        
-        public static enum MoveType//move function will decide how it will work based on this
-        {
-            reg, castle,//todo: add other move types
-        }
-        
-        //coordinates to and from
-        public byte fromY, fromX, toY, toX;
-        public MoveType moveType;//type of move this will be
-    }
     
     //can be used repititively on all tiles of board to find all valid places to move
     public boolean validMove(byte fromY, byte fromX, byte toY, byte toX)//todo
@@ -326,7 +326,11 @@ public class Board//chess board storage class
     //can be used repititively on all tiles of board to find all valid places to move
     public boolean validMove(Move move)//todo
     {
-         //note; cannot depend on any other function as almost all others depend on it
+        //note; cannot depend on any other function as almost all others depend on it
+        
+        if (move.fromX > 7 || move.fromX < 0 || move.fromY > 7 || move.fromY < 0 || move.toX > 7 || move.toX < 0 || move.toY > 7 || move.toY < 0)
+            return false;
+        //if the coordinates are good, then we do deeper checks
         
         switch (move.moveType)
         {
@@ -338,7 +342,7 @@ public class Board//chess board storage class
             {
                 if ((this.board[move.fromX][move.fromY].type) == PieceType.king)
                 {
-                    //placeholder//make sure the castle will be valid
+                    //placeholder//make sure the castle with the kingwill be valid
                 }
                 else
                     return false;
@@ -360,7 +364,7 @@ public class Board//chess board storage class
     }
     
     //will look at 4 coordinates and create a Move, detecting it's type in the process
-    //todo: throw exception if move would be invalid
+    //throws exception if move would be invalid
     public Move createMove(byte fromY, byte fromX, byte toY, byte toX)
     {
         Move newMove = new Move(fromY, fromX, toY, toX, Move.MoveType.reg);//placeholder, not all moves are regular but this is only reg
