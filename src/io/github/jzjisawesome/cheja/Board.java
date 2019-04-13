@@ -157,30 +157,30 @@ public class Board//chess board storage class
         return false;//placeholder
     }
     
-    public static ArrayList validMoves(Board.Piece piece, byte y, byte x)//todo
+    public static ArrayList validMoves(byte y, byte x)//todo
     {
         return new ArrayList();//placeholder
     }
     
-    public boolean validMove(Board.Piece piece, byte fromY, byte fromX, byte toY, byte toX)//todo
+    public boolean validMove(byte fromY, byte fromX, byte toY, byte toX)//todo
     {
         return false;//placeholder
     }
     
     //not whether a move would be smart or not; just the function does not check if the move would be valid
-    public void dumbMove(Board.Piece piece, byte fromY, byte fromX, byte toY, byte toX)//todo
+    public void dumbMove(byte fromY, byte fromX, byte toY, byte toX)//todo
     {
         //placeholder
     }
     
     //smarter move function that checks if move is valid before moving
-    public boolean safeMove(Board.Piece piece, byte fromY, byte fromX, byte toY, byte toX)
+    public boolean safeMove(byte fromY, byte fromX, byte toY, byte toX)
     {
         //check whether move is valid once
-        boolean moveIsValid = this.validMove(piece, fromY, fromX, toY, toX);
+        boolean moveIsValid = this.validMove(fromY, fromX, toY, toX);
         
         if (moveIsValid)//move if it is valid
-            this.dumbMove(piece, fromY, fromX, toY, toX);
+            this.dumbMove(fromY, fromX, toY, toX);
         
         return moveIsValid;//return whether the move was valid and therefore that it was moved
     }
