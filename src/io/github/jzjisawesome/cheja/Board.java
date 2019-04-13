@@ -262,19 +262,41 @@ public class Board//chess board storage class
     //smart; returns if move was sucessfull
     public boolean move(byte fromY, byte fromX, byte toY, byte toX)
     {
-        return false;//placeholder
+        if (this.validMove(fromY, fromX, toY, toX))
+            return this.move(this.createMove(fromY, fromX, toY, toX));
+        else
+            return false;
     }
     
     //can move any piece and follow any Move.MoveType
     //smart; returns if move was sucessfull
     public boolean move(Move move)
     {
-        return false;//placeholder
+        if (this.validMove(move))
+        {
+            switch (move.moveType)
+            {
+                case reg:
+                {
+                    regMove(move.fromY, move.fromX, move.toY, move.toX);//safty of move already checked
+                    return true;
+                    //break;//unreachable anaways
+                }
+                case castle:
+                {
+                    //placeholder
+                }
+                default:
+                    return false;
+            }
+        }
+        else
+            return false;
     }
         
     public static class Move//by convention this class should always contain info about a move that is valid
     {
-        public Move(int fromX, int fromY, int toX, int toY, MoveType moveType)//constructor
+        public Move(byte fromX, byte fromY, byte toX, byte toY, MoveType moveType)//constructor
         {
             this.fromX = fromX;
             this.fromY = fromY;
@@ -289,14 +311,12 @@ public class Board//chess board storage class
         }
         
         //coordinates to and from
-        public int fromX, fromY, toX, toY;
+        public byte fromY, fromX, toY, toX;
         public MoveType moveType;//type of move this will be
     }
     
     
-    
-    
-    //these should be unfavoured over smarter move functions above
+
         
     //will need to try all move types to and from that coodinate and see if it is possible
     public boolean validMove(byte fromY, byte fromX, byte toY, byte toX)//todo
@@ -310,6 +330,8 @@ public class Board//chess board storage class
         return false;//placeholder
     }
     
+    
+    //these two should be unfavoured over smarter move functions above (for direct use)
     //function does not check if the move would be valid
     public void regMove(byte fromY, byte fromX, byte toY, byte toX)//todo
     {
@@ -334,6 +356,6 @@ public class Board//chess board storage class
     //todo: throw exception if move would be invalid
     public Move createMove(byte fromY, byte fromX, byte toY, byte toX)
     {
-        return new Move(0, 0, 0, 0, Move.MoveType.reg);//placeholder
+        return new Move((byte)0, (byte)0, (byte)0, (byte)0, Move.MoveType.reg);//placeholder
     }
 }
