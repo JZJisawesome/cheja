@@ -279,4 +279,25 @@ public class Board//chess board storage class
         
         return moveIsValid;//return whether the move was valid and therefore that it was moved
     }
+        
+    public static class Move//by convention this class should always contain info about a move that is valid
+    {
+        public Move(int fromX, int fromY, int toX, int toY, MoveType moveType)//constructor
+        {
+            this.fromX = fromX;
+            this.fromY = fromY;
+            this.toX = toX;
+            this.toY = toY;
+            this.moveType = moveType;
+        }
+        
+        public static enum MoveType//move function will decide how it will work based on this
+        {
+            reg, castle,//todo: add other move oddities
+        }
+        
+        //coordinates to and from
+        public int fromX, fromY, toX, toY;
+        public MoveType moveType;//type of move this will be
+    }
 }

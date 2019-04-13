@@ -36,6 +36,7 @@ public final class Cheja//main program
         System.out.println();
         
         board.print();
+        System.out.println("\t   " + (board.whiteTurn ? "White" : "Black") + "'s turn");//print who's turn it is
         
         System.out.println("\nGoodbye!");
     }
