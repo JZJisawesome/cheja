@@ -311,10 +311,23 @@ public class Board//chess board storage class
         public MoveType moveType;//type of move this will be
     }
     
-    //probably should work on this instead
+    //can be used repititively on all tiles of board to find all valid places to move
+    public boolean validMove(byte fromY, byte fromX, byte toY, byte toX)//todo
+    {
+        //note; cannot depend on any other function as almost all others depend on it
+        
+        //have to check every kind of move with those coordinates to see if one would work
+        boolean regMoveValid = validMove(new Move(fromY, fromX, toY, toX, Move.MoveType.reg));
+        boolean castleValid = validMove(new Move(fromY, fromX, toY, toX, Move.MoveType.castle));
+        
+        return regMoveValid || castleValid;//as more move types are added, this function will have to check more
+    }
+    
     //can be used repititively on all tiles of board to find all valid places to move
     public boolean validMove(Move move)//todo
     {
+         //note; cannot depend on any other function as almost all others depend on it
+        
         switch (move.moveType)
         {
             case reg:
