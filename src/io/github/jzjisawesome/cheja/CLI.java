@@ -22,6 +22,8 @@
 */
 package io.github.jzjisawesome.cheja;
 
+import java.util.Scanner;
+
 public class CLI//will eventually take over from main function with actual user interaction
 {
     CLI(Board brd)
@@ -30,10 +32,22 @@ public class CLI//will eventually take over from main function with actual user 
     }
     
     private Board board;
+    private boolean byeByeSeeYouLater = false;
     
     public void begin()
     {
+        Scanner input = new Scanner(System.in);
+        String temp;
         
+        while (!byeByeSeeYouLater)
+        {
+            System.out.print("cheja▹");
+            
+            //for testing, remove these next lines later
+            temp = input.nextLine();
+            System.out.println("Test: You typed: " + temp);
+            byeByeSeeYouLater = true;
+        }
     }     
         
     public static void printBoard(Board board)
