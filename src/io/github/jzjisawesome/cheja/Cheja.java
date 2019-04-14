@@ -27,6 +27,8 @@ public final class Cheja//main program
     public static final String version = "0.0.0";
     
     private static Board board = new Board();//create a new chess board to play
+    
+    static CLI ui = new CLI(board);
 
     public static void main(String[] args)
     {
@@ -35,8 +37,8 @@ public final class Cheja//main program
         System.out.println("  Note: colours may look reversed\n  if your terminal is dark themed");
         System.out.println();
         
-        board.print();
-        System.out.println("\t   " + (board.isWhiteTurn() ? "White" : "Black") + "'s turn");//print who's turn it is
+        ui.printBoard();
+        System.out.println("\t   " + (board.isWhiteTurn() ? "White" : "Black") + "'s turn!");//print who's turn it is
         
         System.out.println("\nGoodbye!");
     }
