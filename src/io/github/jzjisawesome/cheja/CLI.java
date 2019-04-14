@@ -30,9 +30,13 @@ public class CLI//will eventually take over from main function with actual user 
     }
     
     private Board board;
-            
+    
+    public void begin()
+    {
         
-    public void printBoard()
+    }     
+        
+    public static void printBoard(Board board)
     {
         System.out.println("   a   b   c   d   e   f   g   h");//print letters for coloums
         System.out.println(" ┏━━━┳━━━┳━━━┳━━━┳━━━┳━━━┳━━━┳━━━┓");//start of the board
@@ -45,37 +49,37 @@ public class CLI//will eventually take over from main function with actual user 
                 char piece;//stores character to print to represent a chess piece
                 
                 //checks type of piece here and varies it depending on its colour later
-                switch (this.board.getPiece(i, j).type)
+                switch (board.getPiece(i, j).type)
                 {
                     case bishop:
                     {
                         //eg.   if white  ................. w else b coloured tile
-                        piece = this.board.getPiece(i, j).isWhite ? '♗' : '♝';
+                        piece = board.getPiece(i, j).isWhite ? '♗' : '♝';
                         break;
                     }
                     case king:
                     {
-                        piece = this.board.getPiece(i, j).isWhite ? '♔' : '♚';
+                        piece = board.getPiece(i, j).isWhite ? '♔' : '♚';
                         break;
                     }
                     case knight:
                     {
-                        piece = this.board.getPiece(i, j).isWhite ? '♘' : '♞';
+                        piece = board.getPiece(i, j).isWhite ? '♘' : '♞';
                         break;
                     }
                     case pawn:
                     {
-                        piece = this.board.getPiece(i, j).isWhite ? '♙' : '♟';
+                        piece = board.getPiece(i, j).isWhite ? '♙' : '♟';
                         break;
                     }
                     case queen:
                     {
-                        piece = this.board.getPiece(i, j).isWhite ? '♕' : '♛';
+                        piece = board.getPiece(i, j).isWhite ? '♕' : '♛';
                         break;
                     }
                     case rook:
                     {
-                        piece = this.board.getPiece(i, j).isWhite ? '♖' : '♜';
+                        piece = board.getPiece(i, j).isWhite ? '♖' : '♜';
                         break;
                     }
                     case none:
@@ -112,9 +116,10 @@ public class CLI//will eventually take over from main function with actual user 
         
         System.out.println(" ┗━━━┻━━━┻━━━┻━━━┻━━━┻━━━┻━━━┻━━━┛");//end of the board
         System.out.println("   a   b   c   d   e   f   g   h");//print letters for coloums
+        System.out.println("\t   " + (board.isWhiteTurn() ? "White" : "Black") + "'s turn!");//print who's turn it is
     }
     
-    public void printBoardFlipped()
+    public static void printBoardFlipped(Board board)
     {
         System.out.println("   h   g   f   e   d   c   b   a");//print letters for coloums
         System.out.println(" ┏━━━┳━━━┳━━━┳━━━┳━━━┳━━━┳━━━┳━━━┓");//start of the board
@@ -127,37 +132,37 @@ public class CLI//will eventually take over from main function with actual user 
                 char piece;//stores character to print to represent a chess piece
                 
                 //checks type of piece here and varies it depending on its colour later
-                switch (this.board.getPiece(i, j).type)
+                switch (board.getPiece(i, j).type)
                 {
                     case bishop:
                     {
                         //eg.   if white  ................. w else b coloured tile
-                        piece = this.board.getPiece(i, j).isWhite ? '♗' : '♝';
+                        piece = board.getPiece(i, j).isWhite ? '♗' : '♝';
                         break;
                     }
                     case king:
                     {
-                        piece = this.board.getPiece(i, j).isWhite ? '♔' : '♚';
+                        piece = board.getPiece(i, j).isWhite ? '♔' : '♚';
                         break;
                     }
                     case knight:
                     {
-                        piece = this.board.getPiece(i, j).isWhite ? '♘' : '♞';
+                        piece = board.getPiece(i, j).isWhite ? '♘' : '♞';
                         break;
                     }
                     case pawn:
                     {
-                        piece = this.board.getPiece(i, j).isWhite ? '♙' : '♟';
+                        piece = board.getPiece(i, j).isWhite ? '♙' : '♟';
                         break;
                     }
                     case queen:
                     {
-                        piece = this.board.getPiece(i, j).isWhite ? '♕' : '♛';
+                        piece = board.getPiece(i, j).isWhite ? '♕' : '♛';
                         break;
                     }
                     case rook:
                     {
-                        piece = this.board.getPiece(i, j).isWhite ? '♖' : '♜';
+                        piece = board.getPiece(i, j).isWhite ? '♖' : '♜';
                         break;
                     }
                     case none:
@@ -194,5 +199,16 @@ public class CLI//will eventually take over from main function with actual user 
         
         System.out.println(" ┗━━━┻━━━┻━━━┻━━━┻━━━┻━━━┻━━━┻━━━┛");//end of the board
         System.out.println("   h   g   f   e   d   c   b   a");//print letters for coloums
+        System.out.println("\t   " + (board.isWhiteTurn() ? "White" : "Black") + "'s turn!");//print who's turn it is
+    }
+    
+    //used internally
+    
+    private void printBrd(boolean flipped)
+    {
+        if (flipped) 
+            printBoardFlipped(this.board);
+        else
+            printBoard(this.board);
     }
 }
