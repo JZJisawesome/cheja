@@ -23,8 +23,6 @@
 package io.github.jzjisawesome.cheja;
 
 import java.util.Scanner;
-import java.util.Map;
-import java.util.HashMap;
 
 public class CLI//will eventually take over from main function with actual user interaction
 {
@@ -38,7 +36,7 @@ public class CLI//will eventually take over from main function with actual user 
     
     private static enum Command
     {
-        invalid, print, exit
+        invalid, print, move, exit,
     };
     
     public void begin()
@@ -76,6 +74,11 @@ public class CLI//will eventually take over from main function with actual user 
                 case exit:
                 {
                     byeByeSeeYouLater = true;
+                    break;
+                }
+                case move:
+                {
+                    this.move(input);
                     break;
                 }
                 case invalid:
@@ -259,25 +262,50 @@ public class CLI//will eventually take over from main function with actual user 
     
     //used internally
     
-    /*never mind this is unnessary and does not work with parameters
-    just going to use an enum and .valueOf
-    //no shame
-    //https://stackoverflow.com/questions/4480334/how-to-call-a-method-stored-in-a-hashmap-java
-    //https://stackoverflow.com/questions/8261075/adding-multiple-entries-to-a-hashmap-at-once-in-one-statement
-    //https://stackoverflow.com/questions/924285/efficiency-of-java-double-brace-initialization
-    private static final Map<String, Runnable> COMMANDS = new HashMap<String, Runnable>()
-    {   //double brace initilization
-        {//() -> is fancy lambda stuffs
-            put("print", () -> this.printBrd);
-        }
-    };
-    */
-    
     private void printBrd()
     {
         if (this.board.isWhiteTurn())//so both players can play from their side of the board
             printBoard(this.board);
         else
             printBoardFlipped(this.board);
+    }
+    
+    private void move(Scanner input)
+    {
+        boolean parseWorked = false;
+        String from = null, to = null;
+
+        if (input.hasNext())
+        {
+            from = input.next();
+
+            if (input.hasNext())
+            {
+                to = input.next();
+                parseWorked = true;
+            }
+        }
+        
+        if (parseWorked)
+        {
+            board.move(coordinatesToMove(from, to));
+        }
+        else
+        {
+            System.out.println("Invalid syntax");
+            System.out.println("Type \"help\" for help");
+        }
+    }
+    
+    //todo error checking
+    //xy and xy; not typical algebraic notation for chess (yet)
+    private Board.Move coordinatesToMove(String fromCoords, String toCoords)
+    {
+        byte fromY = (byte) Character.getNumericValue(fromCoords.charAt(1));//value of 0 to 7
+        byte fromX = (byte) (fromCoords.charAt(0) - 'a');//value of 0 to 7
+        byte toY = (byte) Character.getNumericValue(toCoords.charAt(1));//value of 0 to 7
+        byte toX = (byte) (toCoords.charAt(0) - 'a');//value of 0 to 7
+        
+        return board.createMove(fromY, fromX, toY, toX);
     }
 }

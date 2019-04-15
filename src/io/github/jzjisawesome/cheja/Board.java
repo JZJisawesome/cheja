@@ -186,6 +186,12 @@ public class Board//chess board storage class
             return false;
         //if the coordinates are good, then we do deeper checks
         
+        Board.Piece fromPiece = this.board[move.fromX][move.fromY];
+        Board.Piece toPiece = this.board[move.toX][move.toY];
+        
+        if (fromPiece.type == PieceType.none)
+            return false;//cannot move no piece
+        
         switch (move.moveType)
         {
             case reg:
@@ -194,13 +200,12 @@ public class Board//chess board storage class
             }
             case castle:
             {
-                if ((this.board[move.fromX][move.fromY].type) == PieceType.king)
+                if (fromPiece.type == PieceType.king)
                 {
-                    //placeholder//make sure the castle with the kingwill be valid
+                    //placeholder//make sure the castle with the king will be valid
                 }
                 else
                     return false;
-                
             }
             default:
                 return false;
