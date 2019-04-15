@@ -273,7 +273,7 @@ public class Board//chess board storage class
         //placeholder
     }
     
-    //individual valilidy checkers
+    //individual valilidy checkers for specific pieces and move types
     
     private boolean regPonMoveValid(byte fromY, byte fromX, byte toY, byte toX)
     {
@@ -281,21 +281,23 @@ public class Board//chess board storage class
         Board.Piece toPiece = this.board[toY][toX];
         
         if (toX == fromX && toPiece.type != PieceType.none)//pon cannot advance forward through a piece
-            return false;
+            return false;//give up
 
         //does not account for attacking (yet)
         if (fromPiece.isWhite)
         {
-            if (toY == fromY - 1 && toX == fromX)//white pon would be 1 lower than the tile it could move to and in same coloum
+            if (toY == fromY - 1 && toX == fromX)//white pon would be 1 lower than the tile it could move to; in same coloum
                 return true;
-            else if (fromY == 6 && toY == 4 && toX == fromX)//pon has not moved yet and wants to move 2 ahead
+            //pon has not moved yet; wants to move 2 ahead; no piece between from and to; in same coloum
+            else if (fromY == 6 && toY == 4 && (this.board[5][fromX].type == PieceType.none) && toX == fromX)
                 return true;
         }
         else
         {
-            if (toY == fromY + 1 && toX == fromX)//black pon would be 1 higher than the tile it could move to and in same coloum
+            if (toY == fromY + 1 && toX == fromX)//black pon would be 1 higher than the tile it could move to; in same coloum
                 return true;
-            else if (fromY == 1 && toY == 3 && toX == fromX)//pon has not moved yet and wants to move 2 ahead
+            //pon has not moved yet; wants to move 2 ahead; no piece between from and to; in same coloum
+            else if (fromY == 1 && toY == 3 && (this.board[2][fromX].type == PieceType.none) && toX == fromX)
                 return true;
         }
         
