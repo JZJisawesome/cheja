@@ -44,12 +44,12 @@ public class Board//chess board storage class
             
     public static class Move//by convention this class should always contain info about a move that is valid
     {
-        public Move(byte fromX, byte fromY, byte toX, byte toY, MoveType moveType)//constructor
+        public Move(byte fromY, byte fromX, byte toY, byte toX, MoveType moveType)//constructor
         {
-            this.fromX = fromX;
             this.fromY = fromY;
-            this.toX = toX;
+            this.fromX = fromX;
             this.toY = toY;
+            this.toX = toX;
             this.moveType = moveType;
         }
         
@@ -95,7 +95,7 @@ public class Board//chess board storage class
     
     public Piece getPiece(int y, int x)
     {
-        if (y <= 7 || y >= 0 || x <= 7 || x >= 0)
+        if (y <= 7 && y >= 0 && x <= 7 && x >= 0)
         {
             return board[y][x];
         }
@@ -182,8 +182,15 @@ public class Board//chess board storage class
     {
         //note; cannot depend on any other function as almost all others depend on it
         
-        if (move.fromY <= 7 || move.fromY >= 0 || move.fromX <= 7 || move.fromX >= 0 || move.toY <= 7 || move.toY >= 0 || move.toX <= 7 || move.toX >= 0)
-            return false;
+        //to save typing move later
+        byte fromY = move.fromY;
+        byte fromX = move.fromX;
+        byte toY = move.toY;
+        byte toX = move.toX;
+        
+        /*
+        if ((move.fromY <= 7) && (move.fromY >= 0) && (move.fromX <= 7) && (move.fromX >= 0) && (move.toY <= 7) && (move.toY >= 0) && (move.toX <= 7) && (move.toX >= 0))
+            return false;*/
         //if the coordinates are good, then we do deeper checks
         
         Board.Piece fromPiece = this.board[move.fromX][move.fromY];
@@ -196,7 +203,15 @@ public class Board//chess board storage class
         {
             case reg:
             {
-                //placeholder
+                switch (fromPiece.type)
+                {
+                    case pawn:
+                    {
+                        //does not account for moving two spaces at start of the game or for attacking
+                        if (toY == fromY + 1)
+                            return true;
+                    }
+                }
             }
             case castle:
             {
