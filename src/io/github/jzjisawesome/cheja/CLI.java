@@ -301,10 +301,10 @@ public class CLI//will eventually take over from main function with actual user 
     //xy and xy; not typical algebraic notation for chess (yet)
     private Board.Move coordinatesToMove(String fromCoords, String toCoords)
     {
-        byte fromY = (byte) Character.getNumericValue(fromCoords.charAt(1));//value of 0 to 7
+        byte fromY = (byte) (7 - (Character.getNumericValue(fromCoords.charAt(1)) - 1));//value of 0 to 7 from top
         byte fromX = (byte) (fromCoords.charAt(0) - 'a');//value of 0 to 7
-        byte toY = (byte) Character.getNumericValue(toCoords.charAt(1));//value of 0 to 7
-        byte toX = (byte) (toCoords.charAt(0) - 'a');//value of 0 to 7
+        byte toY =   (byte) (7 - (Character.getNumericValue(toCoords.charAt(1)) - 1));//value of 0 to 7 from bottom
+        byte toX =   (byte) (toCoords.charAt(0) - 'a');//value of 0 to 7
         
         return board.createMove(fromY, fromX, toY, toX);
     }

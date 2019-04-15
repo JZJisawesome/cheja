@@ -95,7 +95,7 @@ public class Board//chess board storage class
     
     public Piece getPiece(int y, int x)
     {
-        if (y <= 7 && y >= 0 && x <= 7 && x >= 0)
+        if ((y <= 7) && (y >= 0) && (x <= 7) && (x >= 0))
         {
             return board[y][x];
         }
@@ -188,13 +188,12 @@ public class Board//chess board storage class
         byte toY = move.toY;
         byte toX = move.toX;
         
-        /*
-        if ((move.fromY <= 7) && (move.fromY >= 0) && (move.fromX <= 7) && (move.fromX >= 0) && (move.toY <= 7) && (move.toY >= 0) && (move.toX <= 7) && (move.toX >= 0))
-            return false;*/
+        if (!((move.fromY <= 7) && (move.fromY >= 0) && (move.fromX <= 7) && (move.fromX >= 0) && (move.toY <= 7) && (move.toY >= 0) && (move.toX <= 7) && (move.toX >= 0)))
+            return false;
         //if the coordinates are good, then we do deeper checks
         
-        Board.Piece fromPiece = this.board[move.fromX][move.fromY];
-        Board.Piece toPiece = this.board[move.toX][move.toY];
+        Board.Piece fromPiece = this.board[move.fromY][move.fromX];
+        Board.Piece toPiece = this.board[move.toY][move.toX];
         
         if (fromPiece.type == PieceType.none)
             return false;//cannot move no piece
@@ -208,10 +207,17 @@ public class Board//chess board storage class
                     case pawn:
                     {
                         //does not account for moving two spaces at start of the game or for attacking
-                        if (toY == fromY + 1)
-                            return true;
+                        if (fromPiece.isWhite)
+                            if (toY == fromY - 1)//white pon would be 1 lower than the tile it could move to
+                                return true;
+                        else
+                            if (toY == fromY + 1)//black pon would be 1 higher than the tile it could move to
+                                return true;
+                        
+                        break;
                     }
                 }
+                break;
             }
             case castle:
             {
@@ -221,10 +227,13 @@ public class Board//chess board storage class
                 }
                 else
                     return false;
+                break;
             }
             default:
                 return false;
         }
+        
+        return false;
     }
     
     //will look at 4 coordinates and create a Move, detecting it's type in the process
