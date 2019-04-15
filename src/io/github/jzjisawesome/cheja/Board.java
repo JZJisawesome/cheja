@@ -280,24 +280,32 @@ public class Board//chess board storage class
         Board.Piece fromPiece = this.board[fromY][fromX];
         Board.Piece toPiece = this.board[toY][toX];
         
-        if (toX == fromX && toPiece.type != PieceType.none)//pon cannot advance forward through a piece
-            return false;//give up
-
         //does not account for attacking (yet)
+        //if (toX == fromX && toPiece.type != PieceType.none)//pon cannot advance forward through a piece
+        //    return false;//give up
+        
         if (fromPiece.isWhite)
         {
-            if (toY == fromY - 1 && toX == fromX)//white pon would be 1 lower than the tile it could move to; in same coloum
+            //white pon would be 1 lower than the tile it could move to; in same coloum; piece not in the way
+            if (toY == fromY - 1 && toX == fromX && toPiece.type == PieceType.none)
                 return true;
             //pon has not moved yet; wants to move 2 ahead; no piece between from and to; in same coloum
             else if (fromY == 6 && toY == 4 && (this.board[5][fromX].type == PieceType.none) && toX == fromX)
                 return true;
+            //pon move one row up; pon will also move one to the left or right; pon will move onto a tile with a piece on it and capture it
+            else if (toY == fromY - 1 && (fromX - 1 == toX || fromX + 1 == toX) && toPiece.type != PieceType.none)
+                return true;
         }
         else
         {
-            if (toY == fromY + 1 && toX == fromX)//black pon would be 1 higher than the tile it could move to; in same coloum
+            //black pon would be 1 higher than the tile it could move to; in same coloum; piece not in the way
+            if (toY == fromY + 1 && toX == fromX && toPiece.type != PieceType.none)
                 return true;
             //pon has not moved yet; wants to move 2 ahead; no piece between from and to; in same coloum
             else if (fromY == 1 && toY == 3 && (this.board[2][fromX].type == PieceType.none) && toX == fromX)
+                return true;
+            //pon move one row up; pon will also move one to the left or right; pon will move onto a tile with a piece on it and capture it
+            else if (toY == fromY + 1 && (fromX + 1 == toX || fromX - 1 == toX) && toPiece.type != PieceType.none)
                 return true;
         }
         
