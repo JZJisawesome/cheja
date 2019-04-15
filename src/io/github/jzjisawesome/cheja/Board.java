@@ -200,6 +200,9 @@ public class Board//chess board storage class
         if (fromPiece.type == PieceType.none)
             return false;//cannot move no piece
         
+        if (fromPiece.isWhite != this.whiteTurn)
+            return false;//only can move pieces that are yours
+        
         switch (move.moveType)
         {
             case reg:
@@ -210,11 +213,15 @@ public class Board//chess board storage class
                     {
                         //does not account for moving two spaces at start of the game or for attacking
                         if (fromPiece.isWhite)
-                            if (toY == fromY - 1)//white pon would be 1 lower than the tile it could move to
+                        {
+                            if (toY == fromY - 1 && toX == fromX)//white pon would be 1 lower than the tile it could move to and in same coloum
                                 return true;
+                        }
                         else
-                            if (toY == fromY + 1)//black pon would be 1 higher than the tile it could move to
+                        {
+                            if (toY == fromY + 1 && toX == fromX)//black pon would be 1 higher than the tile it could move to and in same coloum
                                 return true;
+                        }
                         
                         break;
                     }
