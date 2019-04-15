@@ -211,19 +211,32 @@ public class Board//chess board storage class
                 {
                     case pawn:
                     {
+                        if (toX == fromX && toPiece.type != PieceType.none)//pon cannot advance forward through a piece
+                            return false;
+                        
                         //does not account for moving two spaces at start of the game or for attacking
                         if (fromPiece.isWhite)
                         {
                             if (toY == fromY - 1 && toX == fromX)//white pon would be 1 lower than the tile it could move to and in same coloum
                                 return true;
+                            else if (fromY == 6 && toY == 4 && toX == fromX)//pon has not moved yet and wants to move 2 ahead
+                                return true;
+                                
                         }
                         else
                         {
                             if (toY == fromY + 1 && toX == fromX)//black pon would be 1 higher than the tile it could move to and in same coloum
                                 return true;
+                            else if (fromY == 1 && toY == 3 && toX == fromX)//pon has not moved yet and wants to move 2 ahead
+                                return true;
                         }
                         
                         break;
+                    }
+                    case none:
+                    default:
+                    {
+                        return false;
                     }
                 }
                 break;
