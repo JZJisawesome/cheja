@@ -23,6 +23,8 @@
 package io.github.jzjisawesome.cheja;
 
 import java.util.Scanner;
+import java.util.Map;
+import java.util.HashMap;
 
 public class CLI//will eventually take over from main function with actual user interaction
 {
@@ -34,19 +36,58 @@ public class CLI//will eventually take over from main function with actual user 
     private Board board;
     private boolean byeByeSeeYouLater = false;
     
+    private static enum Command
+    {
+        invalid, print, exit
+    };
+    
     public void begin()
     {
         Scanner input = new Scanner(System.in);
-        String temp;
+        String enteredLine;
+        String commandString;
+        Command command;
         
         while (!byeByeSeeYouLater)
         {
-            System.out.print("cheja▹");
+            System.out.print("cheja▹");//command prompt
             
-            //for testing, remove these next lines later
-            temp = input.nextLine();
-            System.out.println("Test: You typed: " + temp);
-            byeByeSeeYouLater = true;
+            enteredLine = input.nextLine();
+            input = new Scanner(enteredLine);
+            
+            commandString = input.next();
+            
+            try
+            {
+                command = Command.valueOf(commandString);
+            }
+            catch (IllegalArgumentException e)
+            {
+                command = Command.invalid;
+            }
+            
+            switch (command)
+            {
+                case print:
+                {
+                    this.printBrd();
+                    break;
+                }
+                case exit:
+                {
+                    byeByeSeeYouLater = true;
+                    break;
+                }
+                case invalid:
+                default:
+                {
+                    System.out.println("Invalid command: \"" + commandString + "\"");
+                    System.out.println("Type \"help\" for help");//ha ha no help function yet
+                    break;
+                }
+            }
+            
+            input = new Scanner(System.in);//so we can read new user input
         }
     }     
         
@@ -218,11 +259,25 @@ public class CLI//will eventually take over from main function with actual user 
     
     //used internally
     
-    private void printBrd(boolean flipped)
+    /*never mind this is unnessary and does not work with parameters
+    just going to use an enum and .valueOf
+    //no shame
+    //https://stackoverflow.com/questions/4480334/how-to-call-a-method-stored-in-a-hashmap-java
+    //https://stackoverflow.com/questions/8261075/adding-multiple-entries-to-a-hashmap-at-once-in-one-statement
+    //https://stackoverflow.com/questions/924285/efficiency-of-java-double-brace-initialization
+    private static final Map<String, Runnable> COMMANDS = new HashMap<String, Runnable>()
+    {   //double brace initilization
+        {//() -> is fancy lambda stuffs
+            put("print", () -> this.printBrd);
+        }
+    };
+    */
+    
+    private void printBrd()
     {
-        if (flipped) 
-            printBoardFlipped(this.board);
-        else
+        if (this.board.isWhiteTurn())//so both players can play from their side of the board
             printBoard(this.board);
+        else
+            printBoardFlipped(this.board);
     }
 }
