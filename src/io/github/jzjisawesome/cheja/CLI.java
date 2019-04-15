@@ -273,7 +273,7 @@ public class CLI//will eventually take over from main function with actual user 
     private void move(Scanner input)
     {
         boolean parseWorked = false;
-        String from = null, to = null;
+        String from = null, to = null;//so compiler does not complain about uninitilization
 
         if (input.hasNext())
         {
@@ -283,12 +283,22 @@ public class CLI//will eventually take over from main function with actual user 
             {
                 to = input.next();
                 parseWorked = true;
+                
+                try
+                {
+                    board.move(coordinatesToMove(from, to));//move piece
+                    this.printBrd();//show movement
+                }
+                catch (IllegalArgumentException e)
+                {
+                    System.out.println("Invalid move");
+                }
             }
         }
         
         if (parseWorked)
         {
-            board.move(coordinatesToMove(from, to));
+            
         }
         else
         {

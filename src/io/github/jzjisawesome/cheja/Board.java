@@ -148,18 +148,20 @@ public class Board//chess board storage class
                 case reg:
                 {
                     this.regMove(move.fromY, move.fromX, move.toY, move.toX);//safty of move already checked at start of function
-                    return true;
-                    //break;//unreachable anaways
+                    break;//unreachable anaways
                 }
                 case castle:
                 {
                     this.castle(move.fromY, move.fromX, move.toY, move.toX);//safty of move already checked at start of function
-                    return true;
+                    break;
                     //placeholder
                 }
                 default:
-                    return false;
+                    return false;//exit function here because somehow something went wrong
             }
+            
+            this.whiteTurn = !this.whiteTurn;//other person's turn now
+            return true;
         }
         else
             return false;
@@ -188,12 +190,12 @@ public class Board//chess board storage class
         byte toY = move.toY;
         byte toX = move.toX;
         
-        if (!((move.fromY <= 7) && (move.fromY >= 0) && (move.fromX <= 7) && (move.fromX >= 0) && (move.toY <= 7) && (move.toY >= 0) && (move.toX <= 7) && (move.toX >= 0)))
+        if (!((fromY <= 7) && (fromY >= 0) && (fromX <= 7) && (fromX >= 0) && (toY <= 7) && (toY >= 0) && (toX <= 7) && (toX >= 0)))
             return false;
         //if the coordinates are good, then we do deeper checks
         
-        Board.Piece fromPiece = this.board[move.fromY][move.fromX];
-        Board.Piece toPiece = this.board[move.toY][move.toX];
+        Board.Piece fromPiece = this.board[fromY][fromX];
+        Board.Piece toPiece = this.board[toY][toX];
         
         if (fromPiece.type == PieceType.none)
             return false;//cannot move no piece
@@ -253,11 +255,14 @@ public class Board//chess board storage class
     
     //private functions
     
+    //assumes move would be valid
     private void regMove(byte fromY, byte fromX, byte toY, byte toX)//todo
     {
-        //placeholder
+        this.board[toY][toX] = this.board[fromY][fromX];
+        this.board[fromY][fromX] = new Piece(PieceType.none, false);
     }
     
+    //assumes move would be valid
     private void castle(byte fromY, byte fromX, byte toY, byte toX)//todo
     {
         //placeholder
