@@ -36,7 +36,7 @@ public class CLI//will eventually take over from main function with actual user 
     
     private static enum Command
     {
-        invalid, print, move, exit,
+        invalid, print, move, list, exit,
     };
     
     public void begin()
@@ -79,6 +79,11 @@ public class CLI//will eventually take over from main function with actual user 
                 case move:
                 {
                     this.move(input);
+                    break;
+                }
+                case list:
+                {
+                    this.list(input);
                     break;
                 }
                 case invalid:
@@ -262,14 +267,6 @@ public class CLI//will eventually take over from main function with actual user 
     
     //used internally
     
-    private void printBrd()
-    {
-        if (this.board.isWhiteTurn())//so both players can play from their side of the board
-            printBoard(this.board);
-        else
-            printBoardFlipped(this.board);
-    }
-    
     private void move(Scanner input)
     {
         boolean parseWorked = false;
@@ -286,7 +283,7 @@ public class CLI//will eventually take over from main function with actual user 
                 
                 try
                 {
-                    board.move(coordinatesToMove(from, to));//move piece
+                    board.move(parseMove(from, to));//move piece
                     this.printBrd();//show movement
                 }
                 catch (IllegalArgumentException e)
@@ -296,9 +293,36 @@ public class CLI//will eventually take over from main function with actual user 
             }
         }
         
-        if (parseWorked)
+        if (!parseWorked)
         {
+            System.out.println("Invalid syntax");
+            System.out.println("Type \"help\" for help");
+        }
+    }
+        
+    private void list(Scanner input)
+    {
+        boolean parseWorked = false;
+        String from;
+
+        if (input.hasNext())
+        {
+            from = input.next();
             
+            byte fromY = (byte) (7 - (Character.getNumericValue(from.charAt(1)) - 1));//value of 0 to 7 from top
+            byte fromX = (byte) (from.charAt(0) - 'a');//value of 0 to 7
+            
+            System.out.print("Valid moves to: ");
+            
+            for (byte i = 0; i < 8; ++i)//loop for rows
+            {
+                for (byte j = 0; j < 8; ++j)//loop for coloums
+                {
+                    if(board.validMove(fromY, fromX, i, j))
+                        System.out.print(chessCoordinatesOf(i, j) + " ");
+                }
+            }
+            System.out.println();
         }
         else
         {
@@ -307,15 +331,28 @@ public class CLI//will eventually take over from main function with actual user 
         }
     }
     
+    private void printBrd()
+    {
+        if (this.board.isWhiteTurn())//so both players can play from their side of the board
+            printBoard(this.board);
+        else
+            printBoardFlipped(this.board);
+    }
+    
     //todo error checking
     //xy and xy; not typical algebraic notation for chess (yet)
-    private Board.Move coordinatesToMove(String fromCoords, String toCoords)
+    private Board.Move parseMove(String fromCoords, String toCoords)
     {
         byte fromY = (byte) (7 - (Character.getNumericValue(fromCoords.charAt(1)) - 1));//value of 0 to 7 from top
         byte fromX = (byte) (fromCoords.charAt(0) - 'a');//value of 0 to 7
         byte toY =   (byte) (7 - (Character.getNumericValue(toCoords.charAt(1)) - 1));//value of 0 to 7 from bottom
         byte toX =   (byte) (toCoords.charAt(0) - 'a');//value of 0 to 7
         
-        return board.createMove(fromY, fromX, toY, toX);
+        return this.board.createMove(fromY, fromX, toY, toX);
+    }
+    
+    private static String chessCoordinatesOf(byte y, byte x)
+    {
+        return Character.toString((char) ('a' + x)) + (8 - y);
     }
 }
