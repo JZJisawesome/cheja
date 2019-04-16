@@ -207,7 +207,8 @@ public class Board//chess board storage class
         {
             case reg:
             {
-                if (toPiece.isWhite == fromPiece.isWhite && toPiece.type != PieceType.none)//cannot attack one of your own pieces; ignores the colour of blank tiles
+                //cannot attack one of your own pieces; ignores the colour of blank tiles
+                if (toPiece.isWhite == fromPiece.isWhite && toPiece.type != PieceType.none)
                     return false;//may need to "move" to the location of the rook when casteling, so this applies only to regular moves
                 
                 switch (fromPiece.type)
@@ -220,6 +221,17 @@ public class Board//chess board storage class
                     case king:
                     {
                         break;//placeholder
+                    }
+                    case knight:
+                    {
+                        //going two up or down; going one left or right
+                        if ((toY == fromY - 2 || toY == fromY - 2) && (toX == fromX - 1 || toX == fromX + 1 ))
+                            return true;
+                        //going one up or down; going two left or right
+                        else if ((toY == fromY - 1 || toY == fromY + 1) && (toX == fromX - 2 || toX == fromX + 2 ))
+                            return true;
+                        
+                        break;
                     }
                     case none:
                     default:
@@ -248,7 +260,7 @@ public class Board//chess board storage class
     
     //will look at 4 coordinates and create a Move, detecting it's type in the process
     //throws exception if move would be invalid
-    public Move createMove(byte fromY, byte fromX, byte toY, byte toX)
+    private Move createMove(byte fromY, byte fromX, byte toY, byte toX)
     {
         Move newMove = new Move(fromY, fromX, toY, toX, Move.MoveType.reg);//placeholder, not all moves are regular but this is only reg
         
@@ -282,10 +294,6 @@ public class Board//chess board storage class
     {
         Board.Piece fromPiece = this.board[fromY][fromX];
         Board.Piece toPiece = this.board[toY][toX];
-        
-        //does not account for attacking (yet)
-        //if (toX == fromX && toPiece.type != PieceType.none)//pon cannot advance forward through a piece
-        //    return false;//give up
         
         if (fromPiece.isWhite)
         {

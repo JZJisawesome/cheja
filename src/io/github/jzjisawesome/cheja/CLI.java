@@ -283,7 +283,13 @@ public class CLI//will eventually take over from main function with actual user 
                 
                 try
                 {
-                    board.move(parseMove(from, to));//move piece
+                    
+                    byte fromY = (byte) (7 - (Character.getNumericValue(from.charAt(1)) - 1));//value of 0 to 7 from top
+                    byte fromX = (byte) (from.charAt(0) - 'a');//value of 0 to 7
+                    byte toY =   (byte) (7 - (Character.getNumericValue(to.charAt(1)) - 1));//value of 0 to 7 from bottom
+                    byte toX =   (byte) (to.charAt(0) - 'a');//value of 0 to 7
+                    
+                    board.move(fromY, fromX, toY, toX);//move piece
                     this.printBrd();//show movement
                 }
                 catch (IllegalArgumentException e)
@@ -340,16 +346,6 @@ public class CLI//will eventually take over from main function with actual user 
     }
     
     //todo error checking
-    //xy and xy; not typical algebraic notation for chess (yet)
-    private Board.Move parseMove(String fromCoords, String toCoords)
-    {
-        byte fromY = (byte) (7 - (Character.getNumericValue(fromCoords.charAt(1)) - 1));//value of 0 to 7 from top
-        byte fromX = (byte) (fromCoords.charAt(0) - 'a');//value of 0 to 7
-        byte toY =   (byte) (7 - (Character.getNumericValue(toCoords.charAt(1)) - 1));//value of 0 to 7 from bottom
-        byte toX =   (byte) (toCoords.charAt(0) - 'a');//value of 0 to 7
-        
-        return this.board.createMove(fromY, fromX, toY, toX);
-    }
     
     private static String chessCoordinatesOf(byte y, byte x)
     {
