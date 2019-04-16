@@ -207,6 +207,9 @@ public class Board//chess board storage class
         {
             case reg:
             {
+                if (toPiece.isWhite == fromPiece.isWhite && toPiece.type != PieceType.none)//cannot attack one of your own pieces; ignores the colour of blank tiles
+                    return false;//may need to "move" to the location of the rook when casteling, so this applies only to regular moves
+                
                 switch (fromPiece.type)
                 {
                     case pawn:
@@ -289,8 +292,8 @@ public class Board//chess board storage class
             //white pon would be 1 lower than the tile it could move to; in same coloum; piece not in the way
             if (toY == fromY - 1 && toX == fromX && toPiece.type == PieceType.none)
                 return true;
-            //pon has not moved yet; wants to move 2 ahead; no piece between from and to; in same coloum
-            else if (fromY == 6 && toY == 4 && (this.board[5][fromX].type == PieceType.none) && toX == fromX)
+            //pon has not moved yet (initial position); wants to move 2 ahead; no piece between from and to; no piece where pon will move to; in same coloum
+            else if (fromY == 6 && toY == 4 && (this.board[5][fromX].type == PieceType.none) && toPiece.type == PieceType.none && toX == fromX)
                 return true;
             //pon move one row up; pon will also move one to the left or right; pon will move onto a tile with a piece on it and capture it
             else if (toY == fromY - 1 && (fromX - 1 == toX || fromX + 1 == toX) && toPiece.type != PieceType.none)
@@ -299,10 +302,10 @@ public class Board//chess board storage class
         else
         {
             //black pon would be 1 higher than the tile it could move to; in same coloum; piece not in the way
-            if (toY == fromY + 1 && toX == fromX && toPiece.type != PieceType.none)
+            if (toY == fromY + 1 && toX == fromX && toPiece.type == PieceType.none)
                 return true;
-            //pon has not moved yet; wants to move 2 ahead; no piece between from and to; in same coloum
-            else if (fromY == 1 && toY == 3 && (this.board[2][fromX].type == PieceType.none) && toX == fromX)
+            //pon has not moved yet (initial position); wants to move 2 ahead; no piece between from and to; no piece where pon will move to; in same coloum
+            else if (fromY == 1 && toY == 3 && (this.board[2][fromX].type == PieceType.none) && toPiece.type == PieceType.none && toX == fromX)
                 return true;
             //pon move one row up; pon will also move one to the left or right; pon will move onto a tile with a piece on it and capture it
             else if (toY == fromY + 1 && (fromX + 1 == toX || fromX - 1 == toX) && toPiece.type != PieceType.none)
