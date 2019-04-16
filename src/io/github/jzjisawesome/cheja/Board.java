@@ -233,6 +233,11 @@ public class Board//chess board storage class
                         
                         break;
                     }
+                    case rook:
+                    {
+                        return this.regRookMoveValid(fromY, fromX, toY, toX);
+                        //break;
+                    }
                     case none:
                     default:
                     {
@@ -255,7 +260,7 @@ public class Board//chess board storage class
                 return false;
         }
         
-        return false;
+        return false;//if true was not returned earlier
     }
     
     //will look at 4 coordinates and create a Move, detecting it's type in the process
@@ -290,6 +295,7 @@ public class Board//chess board storage class
     
     //individual valilidy checkers for specific pieces and move types
     
+    //assumes from coordinates are of a pon
     private boolean regPonMoveValid(byte fromY, byte fromX, byte toY, byte toX)
     {
         Board.Piece fromPiece = this.board[fromY][fromX];
@@ -319,6 +325,15 @@ public class Board//chess board storage class
             else if (toY == fromY + 1 && (fromX + 1 == toX || fromX - 1 == toX) && toPiece.type != PieceType.none)
                 return true;
         }
+        
+        return false;//by default
+    }
+    
+    private boolean regRookMoveValid(byte fromY, byte fromX, byte toY, byte toX)
+    {
+        Board.Piece fromPiece = this.board[fromY][fromX];
+        Board.Piece toPiece = this.board[toY][toX];
+        
         
         return false;//by default
     }

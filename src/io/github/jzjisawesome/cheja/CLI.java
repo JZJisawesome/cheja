@@ -269,7 +269,7 @@ public class CLI//will eventually take over from main function with actual user 
     
     private void move(Scanner input)
     {
-        boolean parseWorked = false;
+        boolean parseWorked = false;//of both two tokens and individual 
         String from = null, to = null;//so compiler does not complain about uninitilization
 
         if (input.hasNext())
@@ -279,22 +279,24 @@ public class CLI//will eventually take over from main function with actual user 
             if (input.hasNext())
             {
                 to = input.next();
-                parseWorked = true;
                 
                 try
                 {
-                    
                     byte fromY = (byte) (7 - (Character.getNumericValue(from.charAt(1)) - 1));//value of 0 to 7 from top
                     byte fromX = (byte) (from.charAt(0) - 'a');//value of 0 to 7
                     byte toY =   (byte) (7 - (Character.getNumericValue(to.charAt(1)) - 1));//value of 0 to 7 from bottom
                     byte toX =   (byte) (to.charAt(0) - 'a');//value of 0 to 7
                     
-                    board.move(fromY, fromX, toY, toX);//move piece
-                    this.printBrd();//show movement
+                    parseWorked = true;
+
+                    if (!board.move(fromY, fromX, toY, toX))//moving piece was not valid
+                        System.out.println("Invalid move");
+                    else
+                        this.printBrd();//show movement
                 }
-                catch (IllegalArgumentException e)
+                catch (StringIndexOutOfBoundsException e)
                 {
-                    System.out.println("Invalid move");
+                    //parseWorked is already false, has not been set to true
                 }
             }
         }
@@ -318,7 +320,7 @@ public class CLI//will eventually take over from main function with actual user 
             byte fromY = (byte) (7 - (Character.getNumericValue(from.charAt(1)) - 1));//value of 0 to 7 from top
             byte fromX = (byte) (from.charAt(0) - 'a');//value of 0 to 7
             
-            System.out.print("Valid moves to: ");
+            System.out.print("Valid moves from \"" + from + "\" to: ");
             
             for (byte i = 0; i < 8; ++i)//loop for rows
             {
