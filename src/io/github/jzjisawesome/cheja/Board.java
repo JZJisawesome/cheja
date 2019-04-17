@@ -65,7 +65,6 @@ public class Board//chess board storage class
     
     //8 by 8 array of pieces
     //note when accessing this array coordinates are [y][x]
-    //todo: make private
     private Piece board[][] =// new Piece[8][8]//fixme ensure dimentions can only be 8 * 8
     {
         {new Piece(PieceType.rook, false), new Piece(PieceType.knight, false), new Piece(PieceType.bishop, false), new Piece(PieceType.queen, false), new Piece(PieceType.king, false), new Piece(PieceType.bishop, false), new Piece(PieceType.knight, false), new Piece(PieceType.rook, false)},
@@ -215,7 +214,7 @@ public class Board//chess board storage class
                 {
                     case pawn:
                     {
-                        return this.regPonMoveValid(fromY, fromX, toY, toX);
+                        return this.regPawnMoveValid(fromY, fromX, toY, toX);
                         //break;
                     }
                     case king:
@@ -295,33 +294,33 @@ public class Board//chess board storage class
     
     //individual valilidy checkers for specific pieces and move types
     
-    //assumes from coordinates are of a pon
-    private boolean regPonMoveValid(byte fromY, byte fromX, byte toY, byte toX)
+    //assumes from coordinates are of a pawn
+    private boolean regPawnMoveValid(byte fromY, byte fromX, byte toY, byte toX)
     {
         Board.Piece fromPiece = this.board[fromY][fromX];
         Board.Piece toPiece = this.board[toY][toX];
         
         if (fromPiece.isWhite)
         {
-            //white pon would be 1 lower than the tile it could move to; in same coloum; piece not in the way
+            //white pawn would be 1 lower than the tile it could move to; in same coloum; piece not in the way
             if (toY == fromY - 1 && toX == fromX && toPiece.type == PieceType.none)
                 return true;
-            //pon has not moved yet (initial position); wants to move 2 ahead; no piece between from and to; no piece where pon will move to; in same coloum
+            //pawn has not moved yet (initial position); wants to move 2 ahead; no piece between from and to; no piece where pawn will move to; in same coloum
             else if (fromY == 6 && toY == 4 && (this.board[5][fromX].type == PieceType.none) && toPiece.type == PieceType.none && toX == fromX)
                 return true;
-            //pon move one row up; pon will also move one to the left or right; pon will move onto a tile with a piece on it and capture it
+            //pawn move one row up; pawn will also move one to the left or right; pawn will move onto a tile with a piece on it and capture it
             else if (toY == fromY - 1 && (fromX - 1 == toX || fromX + 1 == toX) && toPiece.type != PieceType.none)
                 return true;
         }
         else
         {
-            //black pon would be 1 higher than the tile it could move to; in same coloum; piece not in the way
+            //black pawn would be 1 higher than the tile it could move to; in same coloum; piece not in the way
             if (toY == fromY + 1 && toX == fromX && toPiece.type == PieceType.none)
                 return true;
-            //pon has not moved yet (initial position); wants to move 2 ahead; no piece between from and to; no piece where pon will move to; in same coloum
+            //pawn has not moved yet (initial position); wants to move 2 ahead; no piece between from and to; no piece where pawn will move to; in same coloum
             else if (fromY == 1 && toY == 3 && (this.board[2][fromX].type == PieceType.none) && toPiece.type == PieceType.none && toX == fromX)
                 return true;
-            //pon move one row up; pon will also move one to the left or right; pon will move onto a tile with a piece on it and capture it
+            //pawn move one row up; pawn will also move one to the left or right; pawn will move onto a tile with a piece on it and capture it
             else if (toY == fromY + 1 && (fromX + 1 == toX || fromX - 1 == toX) && toPiece.type != PieceType.none)
                 return true;
         }
@@ -329,6 +328,7 @@ public class Board//chess board storage class
         return false;//by default
     }
     
+    //assumes from coordinates are of a rook
     private boolean regRookMoveValid(byte fromY, byte fromX, byte toY, byte toX)
     {
         Board.Piece fromPiece = this.board[fromY][fromX];
@@ -343,6 +343,7 @@ public class Board//chess board storage class
             //check if there are any pieces in between where rook is and where it wants to go
             for (int i = toY + 1; i < fromY; ++i)
             {
+                //is there a piece?
                 if (this.board[i][fromX].type != PieceType.none)
                     return false;
             }
@@ -353,6 +354,7 @@ public class Board//chess board storage class
             //check if there are any pieces in between where rook is and where it wants to go
             for (int i = fromY + 1; i < toY; ++i)
             {
+                //is there a piece?
                 if (this.board[i][fromX].type != PieceType.none)
                     return false;
             }
@@ -363,6 +365,7 @@ public class Board//chess board storage class
             //check if there are any pieces in between where rook is and where it wants to go
             for (int i = toX + 1; i < fromX; ++i)
             {
+                //is there a piece?
                 if (this.board[fromY][i].type != PieceType.none)
                     return false;
             }
@@ -373,6 +376,7 @@ public class Board//chess board storage class
             //check if there are any pieces in between where rook is and where it wants to go
             for (int i = fromX + 1; i < toX; ++i)
             {
+                //is there a piece?
                 if (this.board[fromY][i].type != PieceType.none)
                     return false;
             }
