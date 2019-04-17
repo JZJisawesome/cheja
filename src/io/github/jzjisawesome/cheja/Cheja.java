@@ -27,7 +27,7 @@ public final class Cheja//main program
     public static final String VERSION = "0.0.0";
     
     private static Board board = new Board();//create a new chess board to play
-    private static CLI ui = new CLI(board);//to be used later
+    private static CLI cli = new CLI(board);//to be used later
 
     public static void main(String[] args)
     {
@@ -39,7 +39,7 @@ public final class Cheja//main program
         CLI.printBoard(board);
         System.out.println();
         
-        ui.begin();
+        cli.begin();
         
         System.out.println("\nGoodbye!");
     }

@@ -219,7 +219,13 @@ public class Board//chess board storage class
                     }
                     case king:
                     {
-                        break;//placeholder
+                        return false;//placeholder
+                        //break;
+                    }
+                    case queen:
+                    {
+                        return false;//placeholder
+                        //break;
                     }
                     case knight:
                     {
@@ -235,6 +241,11 @@ public class Board//chess board storage class
                     case rook:
                     {
                         return this.regRookMoveValid(fromY, fromX, toY, toX);
+                        //break;
+                    }
+                    case bishop:
+                    {
+                        return this.regBishopMoveValid(fromY, fromX, toY, toX);
                         //break;
                     }
                     case none:
@@ -383,5 +394,107 @@ public class Board//chess board storage class
         }
         
         return true;//if there were no pieces in the way
+    }
+    
+    //assumes from coordinates are of a bishop
+    private boolean regBishopMoveValid(byte fromY, byte fromX, byte toY, byte toX)
+    {
+        Board.Piece fromPiece = this.board[fromY][fromX];
+        Board.Piece toPiece = this.board[toY][toX];
+        
+        //location is higher than bishop
+        if (toY < fromY)
+        {
+            //location is to left of bishop
+            if (toX < fromX)
+            {
+                //cannot be its own for loop because we need to step with i
+                int j = fromX - 1;
+                
+                for (int i = fromY - 1; i >= 0; --i)
+                {
+                    if (toY == i && toX == j)//if this is the location
+                        return true;
+                    else if (this.board[i][j].type != PieceType.none)//there is a piece in our way
+                        return false;//give up; we're blocked
+                    
+                    
+                    //cannot be its own for loop because we need to step with i
+                    --j;
+                    
+                    if (!(j >= 0))
+                        break;//prevent out of bounds
+                }
+            }
+            //location is to right of bishop
+            else if (toX > fromX)
+            {
+                //cannot be its own for loop because we need to step with i
+                int j = fromX + 1;
+                
+                for (int i = fromY - 1; i >= 0; --i)
+                {
+                    if (toY == i && toX == j)//if this is the location
+                        return true;
+                    else if (this.board[i][j].type != PieceType.none)//there is a piece in our way
+                        return false;//give up; we're blocked
+                    
+                    
+                    //cannot be its own for loop because we need to step with i
+                    ++j;
+                    
+                    if (!(j <= 7))
+                        break;//prevent out of bounds
+                }
+            }
+        }
+        //location is lower than bishop
+        else if (toY > fromY)
+        {
+            //location is to left of bishop
+            if (toX < fromX)
+            {
+                //cannot be its own for loop because we need to step with i
+                int j = fromX - 1;
+                
+                for (int i = fromY + 1; i <= 7; ++i)
+                {
+                    if (toY == i && toX == j)//if this is the location
+                        return true;
+                    else if (this.board[i][j].type != PieceType.none)//there is a piece in our way
+                        return false;//give up; we're blocked
+                    
+                    
+                    //cannot be its own for loop because we need to step with i
+                    --j;
+                    
+                    if (!(j >= 0))
+                        break;//prevent out of bounds
+                }
+            }
+            //location is to right of bishop
+            else if (toX > fromX)
+            {
+                //cannot be its own for loop because we need to step with i
+                int j = fromX + 1;
+                
+                for (int i = fromY + 1; i <= 7; ++i)
+                {
+                    if (toY == i && toX == j)//if this is the location
+                        return true;
+                    else if (this.board[i][j].type != PieceType.none)//there is a piece in our way
+                        return false;//give up; we're blocked
+                    
+                    
+                    //cannot be its own for loop because we need to step with i
+                    ++j;
+                    
+                    if (!(j <= 7))
+                        break;//prevent out of bounds
+                }
+            }
+        }
+        
+        return false;//if we find the location in our search
     }
 }
