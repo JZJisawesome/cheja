@@ -225,7 +225,7 @@ public class Board//chess board storage class
                     case knight:
                     {
                         //going two up or down; going one left or right
-                        if ((toY == fromY - 2 || toY == fromY - 2) && (toX == fromX - 1 || toX == fromX + 1 ))
+                        if ((toY == fromY - 2 || toY == fromY + 2) && (toX == fromX - 1 || toX == fromX + 1 ))
                             return true;
                         //going one up or down; going two left or right
                         else if ((toY == fromY - 1 || toY == fromY + 1) && (toX == fromX - 2 || toX == fromX + 2 ))
@@ -334,7 +334,50 @@ public class Board//chess board storage class
         Board.Piece fromPiece = this.board[fromY][fromX];
         Board.Piece toPiece = this.board[toY][toX];
         
+        //rook is lower on board but in same coloum
+        if (!(toY == fromY || toX == fromX))
+            return false;
         
-        return false;//by default
+        if (toY < fromY && toX == fromX)
+        {
+            //check if there are any pieces in between where rook is and where it wants to go
+            for (int i = toY + 1; i < fromY; ++i)
+            {
+                if (this.board[i][fromX].type != PieceType.none)
+                    return false;
+            }
+        }
+        //rook is higher on board but in same coloum
+        else if (toY > fromY && toX == fromX)
+        {
+            //check if there are any pieces in between where rook is and where it wants to go
+            for (int i = fromY + 1; i < toY; ++i)
+            {
+                if (this.board[i][fromX].type != PieceType.none)
+                    return false;
+            }
+        }
+        //rook is on same coloum but to the right of
+        else if (toY == fromY && toX < fromX)
+        {
+            //check if there are any pieces in between where rook is and where it wants to go
+            for (int i = toX + 1; i < fromX; ++i)
+            {
+                if (this.board[fromY][i].type != PieceType.none)
+                    return false;
+            }
+        }
+        //rook is on same coloum but to the left of
+        else if (toY == fromY && toX > fromX)
+        {
+            //check if there are any pieces in between where rook is and where it wants to go
+            for (int i = fromX + 1; i < toX; ++i)
+            {
+                if (this.board[fromY][i].type != PieceType.none)
+                    return false;
+            }
+        }
+        
+        return true;//if there were no pieces in the way
     }
 }
