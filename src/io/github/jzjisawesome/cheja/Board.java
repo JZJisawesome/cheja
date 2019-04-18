@@ -345,51 +345,60 @@ public class Board//chess board storage class
         Board.Piece fromPiece = this.board[fromY][fromX];
         Board.Piece toPiece = this.board[toY][toX];
         
-        //rook is lower on board but in same coloum
+        //rook is in the same row or the same coloum
         if (!(toY == fromY || toX == fromX))
             return false;
         
-        if (toY < fromY && toX == fromX)
+        //rook in same row
+        if (toY == fromY)
         {
-            //check if there are any pieces in between where rook is and where it wants to go
-            for (int i = toY + 1; i < fromY; ++i)
+            //rook is to the right of toPiece
+            if (toX < fromX)
             {
-                //is there a piece?
-                if (this.board[i][fromX].type != PieceType.none)
-                    return false;
+                //check if there are any pieces in between where rook is and where it wants to go
+                for (int i = toX + 1; i < fromX; ++i)
+                {
+                    //is there a piece?
+                    if (this.board[fromY][i].type != PieceType.none)
+                        return false;
+                }
+            }
+            //rook is to the left of toPiece
+            else if (toX > fromX)
+            {
+                //check if there are any pieces in between where rook is and where it wants to go
+                for (int i = fromX + 1; i < toX; ++i)
+                {
+                    //is there a piece?
+                    if (this.board[fromY][i].type != PieceType.none)
+                        return false;
+                }
             }
         }
-        //rook is higher on board but in same coloum
-        else if (toY > fromY && toX == fromX)
+        //rook in same coloum
+        else if (toX == fromX)
         {
-            //check if there are any pieces in between where rook is and where it wants to go
-            for (int i = fromY + 1; i < toY; ++i)
+            //rook is below toPiece
+            if (toY < fromY)
             {
-                //is there a piece?
-                if (this.board[i][fromX].type != PieceType.none)
-                    return false;
+                //check if there are any pieces in between where rook is and where it wants to go
+                for (int i = toY + 1; i < fromY; ++i)
+                {
+                    //is there a piece?
+                    if (this.board[i][fromX].type != PieceType.none)
+                        return false;
+                }
             }
-        }
-        //rook is on same coloum but to the right of
-        else if (toY == fromY && toX < fromX)
-        {
-            //check if there are any pieces in between where rook is and where it wants to go
-            for (int i = toX + 1; i < fromX; ++i)
+            //rook is above toPiece
+            else if (toY > fromY)
             {
-                //is there a piece?
-                if (this.board[fromY][i].type != PieceType.none)
-                    return false;
-            }
-        }
-        //rook is on same coloum but to the left of
-        else if (toY == fromY && toX > fromX)
-        {
-            //check if there are any pieces in between where rook is and where it wants to go
-            for (int i = fromX + 1; i < toX; ++i)
-            {
-                //is there a piece?
-                if (this.board[fromY][i].type != PieceType.none)
-                    return false;
+                //check if there are any pieces in between where rook is and where it wants to go
+                for (int i = fromY + 1; i < toY; ++i)
+                {
+                    //is there a piece?
+                    if (this.board[i][fromX].type != PieceType.none)
+                        return false;
+                }
             }
         }
         
@@ -401,6 +410,22 @@ public class Board//chess board storage class
     {
         Board.Piece fromPiece = this.board[fromY][fromX];
         Board.Piece toPiece = this.board[toY][toX];
+        
+        
+        /* Seperate for loops are not used for the j value. This is because
+         * i and j must increase togeather, so that the bishop can only move diaganolly.
+         * We must however sill start in the proper position and prevent oob,
+         * so the guts of this for loop are spilt into several diffrent locations
+         * for each diagonal direction.
+         *
+         * Side note:
+         * This could have been done with significantly less code (both this and
+         * the rook logic) but dividing the search into parts
+         * (eg. toY < fromY && toX < fromX) makes us only have to step in
+         * one diagonal direction, saving time.
+         * Also I did not think about doing all directions with one loop at first,
+         * but hey this is more efficient so yay i guess.
+        */
         
         //location is higher than bishop
         if (toY < fromY)
