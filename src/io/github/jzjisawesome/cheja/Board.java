@@ -219,12 +219,23 @@ public class Board//chess board storage class
                     }
                     case king:
                     {
-                        return false;//placeholder
-                        //break;
+                        //king is moving up or down one
+                        if ((toY == fromY - 1 || toY == fromY + 1) && toX == fromX)
+                            return true;
+                        //king is left or right one
+                        else if (toY == fromY && (toX == fromX - 1 || toX == fromX + 1))
+                            return true;
+                        //if king is moving diagonally one
+                        else if ((toY == fromY - 1 || toY == fromY + 1) && (toX == fromX - 1 || toX == fromX + 1 ))
+                            return true;
+                        
+                        break;
                     }
                     case queen:
                     {
-                        return false;//placeholder
+                        //queen can move either like a rook or a bishop
+                        return this.regRookMoveValid(fromY, fromX, toY, toX) ||
+                               this.regBishopMoveValid(fromY, fromX, toY, toX);
                         //break;
                     }
                     case knight:
