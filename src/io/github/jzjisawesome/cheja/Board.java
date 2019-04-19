@@ -252,9 +252,9 @@ public class Board//chess board storage class
                     case rook:
                     {
                         //Moves laterally
-                        if ((toY == fromY - 8 || toY == fromY + 8 || toX == fromX - 8 || toX == fromX + 8))
+                        if ((toY == fromY - 7 || toY == fromY + 7 || toX == fromX - 7 || toX == fromX + 7))
                             return true;
-                        return this.regRookMoveValid(fromY, fromX, toY, toX);
+                        //return this.regRookMoveValid(fromY, fromX, toY, toX);
                         //break;
                     }
                     case bishop:
