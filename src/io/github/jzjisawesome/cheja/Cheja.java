@@ -24,7 +24,7 @@ package io.github.jzjisawesome.cheja;
 
 public final class Cheja//main program
 {
-    public static final String VERSION = "0.0.0";
+    public static final String VERSION = "0.0.1";
     
     private static Board board = new Board();//create a new chess board to play
     private static CLI cli = new CLI(board);//to be used later
