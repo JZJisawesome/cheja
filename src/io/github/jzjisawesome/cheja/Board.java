@@ -251,6 +251,9 @@ public class Board//chess board storage class
                     }
                     case rook:
                     {
+                        //Moves laterally
+                        if ((toY == fromY - 8 || toY == fromY + 8 || toX == fromX - 8 || toX == fromX + 8))
+                            return true;
                         return this.regRookMoveValid(fromY, fromX, toY, toX);
                         //break;
                     }
