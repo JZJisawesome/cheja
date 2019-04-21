@@ -1,6 +1,6 @@
 /* MIT License
  *
- * Copyright (c) 2019 John Jekel
+ * Copyright (c) 2019 John Jekel, Rowan Massad
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -428,7 +428,7 @@ public class CLI//will eventually take over from main function with actual user 
         System.out.println("╔════════════════════════════════════════════════════════════════════════════════╗");
         System.out.println("║MIT License                                                                     ║");
         System.out.println("║                                                                                ║");
-        System.out.println("║Copyright (c) 2019 John Jekel                                                   ║");
+        System.out.println("║Copyright (c) 2019 John Jekel, Rowan Massad                                     ║");
         System.out.println("║                                                                                ║");
         System.out.println("║Permission is hereby granted, free of charge, to any person obtaining a copy    ║");
         System.out.println("║of this software and associated documentation files (the \"Software\"), to deal   ║");//to componsate for escape characters

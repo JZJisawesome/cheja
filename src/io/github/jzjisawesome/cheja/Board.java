@@ -1,6 +1,6 @@
 /* MIT License
  *
- * Copyright (c) 2019 John Jekel
+ * Copyright (c) 2019 John Jekel, Rowan Massad
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -297,7 +297,7 @@ public class Board//chess board storage class
             return _regMove;
         }
         
-        Move castleMove = new Move(fromY, fromX, toY, toX, Move.MoveType.castle);//a regular move
+        Move castleMove = new Move(fromY, fromX, toY, toX, Move.MoveType.castle);//a castle move
         if (this.validMove(castleMove))
         {
             return castleMove;
