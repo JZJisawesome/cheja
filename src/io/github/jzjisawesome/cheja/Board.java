@@ -291,16 +291,21 @@ public class Board//chess board storage class
     //throws exception if move would be invalid
     private Move createMove(byte fromY, byte fromX, byte toY, byte toX)
     {
-        Move newMove = new Move(fromY, fromX, toY, toX, Move.MoveType.reg);//placeholder, not all moves are regular but this is only reg
-        
-        if (this.validMove(newMove))
+        Move _regMove = new Move(fromY, fromX, toY, toX, Move.MoveType.reg);//a regular move
+        if (this.validMove(_regMove))
         {
-            return newMove;
+            return _regMove;
         }
-        else
-            throw new IllegalArgumentException("createMove(move) invalid");
+        
+        Move castleMove = new Move(fromY, fromX, toY, toX, Move.MoveType.castle);//a regular move
+        if (this.validMove(castleMove))
+        {
+            return castleMove;
+        }
+        
+        //we only get here if validGrid said none of the move types worked 
+        throw new IllegalArgumentException("createMove coordinates invalid");
     }
-    
     
     //private functions
     
