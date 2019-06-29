@@ -27,7 +27,7 @@ public class Board//chess board storage class
     public static enum PieceType
     {
         none, pawn, knight, rook, bishop, queen, king
-    };
+    };//todo: in future probably faster to replace none pieces with null for speed
     
     public static class Piece
     {
@@ -156,7 +156,7 @@ public class Board//chess board storage class
                     //placeholder
                 }
                 default:
-                    return false;//exit function here because somehow something went wrong
+                    return false;//exit function here if somehow something went wrong
             }
             
             this.whiteTurn = !this.whiteTurn;//other person's turn now
@@ -183,7 +183,7 @@ public class Board//chess board storage class
     {
         //note; cannot depend on any other function as almost all others depend on it
         
-        //to save typing move later
+        //to make things easier to read
         byte fromY = move.fromY;
         byte fromX = move.fromX;
         byte toY = move.toY;
@@ -191,7 +191,7 @@ public class Board//chess board storage class
         
         if (!((fromY <= 7) && (fromY >= 0) && (fromX <= 7) && (fromX >= 0) && (toY <= 7) && (toY >= 0) && (toX <= 7) && (toX >= 0)))
             return false;
-        //if the coordinates are good, then we do deeper checks
+        //if the coordinates are in bounds, then we do deeper checks
         
         Board.Piece fromPiece = this.board[fromY][fromX];
         Board.Piece toPiece = this.board[toY][toX];
@@ -206,9 +206,9 @@ public class Board//chess board storage class
         {
             case reg:
             {
-                //cannot attack one of your own pieces; ignores the colour of blank tiles
+                //cannot attack one of your own pieces; ignores the colour of blank tiles as they might be black or white but it is meaningless for them
                 if (toPiece.isWhite == fromPiece.isWhite && toPiece.type != PieceType.none)
-                    return false;//may need to "move" to the location of the rook when casteling, so this applies only to regular moves
+                    return false;//may need to move to the location of the rook when casteling and then recreate the rook elsewhere, so this applies only to regular moves
                 
                 switch (fromPiece.type)
                 {
@@ -236,6 +236,7 @@ public class Board//chess board storage class
                         //queen can move either like a rook or a bishop
                         return this.regRookMoveValid(fromY, fromX, toY, toX) ||
                                this.regBishopMoveValid(fromY, fromX, toY, toX);
+                        //I did not think or-ing the rook and bishop togeather would accually work
                         //break;
                     }
                     case knight:
@@ -251,9 +252,12 @@ public class Board//chess board storage class
                     }
                     case rook:
                     {
+                        //start of new rook moving implementation
                         //Moves laterally
                         if ((toY == fromY - 7 || toY == fromY + 7 || toX == fromX - 7 || toX == fromX + 7))
                             return true;
+                        
+                        //old one to be kept for now until the new one works and is faster
                         //return this.regRookMoveValid(fromY, fromX, toY, toX);
                         //break;
                     }
@@ -312,8 +316,8 @@ public class Board//chess board storage class
     //assumes move would be valid
     private void regMove(byte fromY, byte fromX, byte toY, byte toX)//todo
     {
-        this.board[toY][toX] = this.board[fromY][fromX];
-        this.board[fromY][fromX] = new Piece(PieceType.none, false);
+        this.board[toY][toX] = this.board[fromY][fromX];//copy piece
+        this.board[fromY][fromX] = new Piece(PieceType.none, false);//delete original
     }
     
     //assumes move would be valid
@@ -330,6 +334,9 @@ public class Board//chess board storage class
         Board.Piece fromPiece = this.board[fromY][fromX];
         Board.Piece toPiece = this.board[toY][toX];
         
+        //lower=physically lower index; higher=physically higher index
+        //nothing to do with chess coordinates
+        
         if (fromPiece.isWhite)
         {
             //white pawn would be 1 lower than the tile it could move to; in same coloum; piece not in the way
@@ -342,7 +349,7 @@ public class Board//chess board storage class
             else if (toY == fromY - 1 && (fromX - 1 == toX || fromX + 1 == toX) && toPiece.type != PieceType.none)
                 return true;
         }
-        else
+        else//everything kind of flips because the the pons move in the opposite direction
         {
             //black pawn would be 1 higher than the tile it could move to; in same coloum; piece not in the way
             if (toY == fromY + 1 && toX == fromX && toPiece.type == PieceType.none)
@@ -364,17 +371,14 @@ public class Board//chess board storage class
         Board.Piece fromPiece = this.board[fromY][fromX];
         Board.Piece toPiece = this.board[toY][toX];
         
-        //rook is in the same row or the same coloum
-        if (!(toY == fromY || toX == fromX))
-            return false;
         
         //rook in same row
         if (toY == fromY)
         {
-            //rook is to the right of toPiece
+            //rook is to the right of (greater than) toPiece
             if (toX < fromX)
             {
-                //check if there are any pieces in between where rook is and where it wants to go
+                //check if there are any pieces in between where rook is and where it wants to go (not including destination)
                 for (int i = toX + 1; i < fromX; ++i)
                 {
                     //is there a piece?
@@ -382,10 +386,10 @@ public class Board//chess board storage class
                         return false;
                 }
             }
-            //rook is to the left of toPiece
+            //rook is to the left of (less than) toPiece
             else if (toX > fromX)
             {
-                //check if there are any pieces in between where rook is and where it wants to go
+                //check if there are any pieces in between where rook is and where it wants to go (not including destination)
                 for (int i = fromX + 1; i < toX; ++i)
                 {
                     //is there a piece?
@@ -397,10 +401,10 @@ public class Board//chess board storage class
         //rook in same coloum
         else if (toX == fromX)
         {
-            //rook is below toPiece
+            //rook is below (greater than) toPiece
             if (toY < fromY)
             {
-                //check if there are any pieces in between where rook is and where it wants to go
+                //check if there are any pieces in between where rook is and where it wants to go (not including destination)
                 for (int i = toY + 1; i < fromY; ++i)
                 {
                     //is there a piece?
@@ -408,10 +412,10 @@ public class Board//chess board storage class
                         return false;
                 }
             }
-            //rook is above toPiece
+            //rook is above (less than) toPiece
             else if (toY > fromY)
             {
-                //check if there are any pieces in between where rook is and where it wants to go
+                //check if there are any pieces in between where rook is and where it wants to go (not including destination)
                 for (int i = fromY + 1; i < toY; ++i)
                 {
                     //is there a piece?
@@ -420,6 +424,8 @@ public class Board//chess board storage class
                 }
             }
         }
+        else
+            return false;//rook was not in same row or the same coloum
         
         return true;//if there were no pieces in the way
     }
@@ -431,15 +437,15 @@ public class Board//chess board storage class
         Board.Piece toPiece = this.board[toY][toX];
         
         
-        /* Seperate for loops are not used for the j value. This is because
+        /* Cascading for loops are not used for the j value. This is because
          * i and j must increase togeather, so that the bishop can only move diaganolly.
-         * We must however sill start in the proper position and prevent oob,
+         * We must however sill start in the proper position and prevent out of bounds,
          * so the guts of this for loop are spilt into several diffrent locations
          * for each diagonal direction.
          *
          * Side note:
          * This could have been done with significantly less code (both this and
-         * the rook logic) but dividing the search into parts
+         * the rook logic) but dividing the search into parts (4 surronding quadrants)
          * (eg. toY < fromY && toX < fromX) makes us only have to step in
          * one diagonal direction, saving time.
          * Also I did not think about doing all directions with one loop at first,

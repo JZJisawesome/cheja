@@ -29,7 +29,7 @@ public class CLI//will eventually take over from main function with actual user 
 {
     CLI(Board brd)
     {
-        this.board = brd;//the board will be copied by refrence, so changes here will be reflected in the Cheja main class
+        this.board = brd;//the board will be copied by refrence, so changes here will be reflected in the original object
     }
     
     private Board board;
@@ -347,6 +347,7 @@ public class CLI//will eventually take over from main function with actual user 
         }
     }
         
+    //list moves
     private void list(Scanner input)
     {
         boolean parseWorked = false;
