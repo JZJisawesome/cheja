@@ -30,20 +30,36 @@ import java.util.Scanner;
  */
 public class CLI
 {
+    /**
+     * Constructor that copies a Board object by refrence to use for the game
+     * @param brd The board to use
+     */
     CLI(Board brd)
     {
         this.board = brd;//the board will be copied by refrence, so changes here will be reflected in the original object
     }
     
+    /**
+     * Refrence to board for game
+     */
     private Board board;
     
-    private static boolean invertPieceColourByDefault = true;//to make pieces proper colour for black themed terminals
+    /**
+     * Whether to display black pieces for instead of white and vice-versa for proper colour with dark terminals
+     */
+    private static boolean invertPieceColour = true;//to make pieces proper colour
     
+    /**
+     * Types of commands for use in begin(). Can probably be replaces with a switch between different strings
+     */
     private static enum Command
     {
         invalid, print, move, list, save, load, help, about, exit, 
     };
     
+    /**
+     * Start accepting user input in an interactive fashion
+    */
     public void begin()
     {
         Scanner input = new Scanner(System.in);
@@ -142,11 +158,15 @@ public class CLI
             input = new Scanner(System.in);//so we can read new user input
         }
     }     
-        
+    
+    /**
+     * Print the board to System.out in the same orientation of the board array (black at top, white at bottom)
+     * @param board The board to print
+     */
     public static void printBoard(Board board)
     {
         //invert the colour of the piece if the boolean in the class is enabled
-        boolean originalClr = !invertPieceColourByDefault;
+        boolean originalClr = !invertPieceColour;
         
         System.out.println("   a   b   c   d   e   f   g   h");//print letters for coloums
         System.out.println(" ┏━━━┳━━━┳━━━┳━━━┳━━━┳━━━┳━━━┳━━━┓");//start of the board
@@ -233,10 +253,14 @@ public class CLI
         System.out.println("\t   " + (board.isWhiteTurn() ? "White" : "Black") + "'s turn!");//print who's turn it is
     }
     
+    /**
+     * Print the board to System.out but rotated upside-down from the board array (black at bottom, white at top)
+     * @param board The board to print
+     */
     public static void printBoardFlipped(Board board)
     {
         //invert the colour of the piece if the boolean in the class is enabled
-        boolean originalClr = !invertPieceColourByDefault;
+        boolean originalClr = !invertPieceColour;
         
         System.out.println("   h   g   f   e   d   c   b   a");//print letters for coloums
         System.out.println(" ┏━━━┳━━━┳━━━┳━━━┳━━━┳━━━┳━━━┳━━━┓");//start of the board
@@ -325,6 +349,12 @@ public class CLI
     
     //used internally
     
+    /**
+     * Parse input text to find coordinates to move between and move the piece.
+     * 
+     * eg. "a2 a3"
+     * @param input The input to parse
+     */
     private void move(Scanner input)
     {
         boolean parseWorked = false;//of both two tokens and individual 
@@ -367,6 +397,10 @@ public class CLI
     }
         
     //list moves
+    /**
+     * Parses the input for coordinates of a piece and prints all of the valid moves a piece can make
+     * @param input The input to parse
+     */
     private void list(Scanner input)
     {
         boolean parseWorked = false;
@@ -383,6 +417,7 @@ public class CLI
 
                 System.out.print("Valid moves from \"" + from + "\" to: ");
 
+                //loop through all coordinates to find valid moves
                 for (byte i = 0; i < 8; ++i)//loop for rows
                 {
                     for (byte j = 0; j < 8; ++j)//loop for coloums
@@ -406,6 +441,9 @@ public class CLI
         }
     }
     
+    /**
+     * Convenience function to print the board oriented for the player that has to move
+     */
     private void printBrd()
     {
         if (this.board.isWhiteTurn())//so both players can play from their side of the board
@@ -415,12 +453,25 @@ public class CLI
     }
     
     //todo error checking
-    
+    /**
+     * Helper function to convert board array coordinates to 
+     */
     private static String chessCoordinatesOf(byte y, byte x)
     {
         return Character.toString((char) ('a' + x)) + (8 - y);
     }
     
+    /**
+     * Helper function to convert chess coordinates to board array coordinates. Not implemented yet
+     */
+    private static String boardCoordinatesOf(String coordinates)
+    {
+        return "";//placeholder
+    }
+    
+    /**
+     * Print command help text to the screen
+     */
     private static void saveTheUserFromHeadaches()
     {
         
@@ -438,6 +489,9 @@ public class CLI
         System.out.println("╚══════╩═══════════════════════════════════════════════════╝");
     }
     
+    /**
+     * Display information about cheja
+    */
     private static void displayAbout()
     {
         System.out.println("\ncheja " + Cheja.VERSION);
