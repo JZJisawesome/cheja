@@ -50,14 +50,6 @@ public class CLI
     private static boolean invertPieceColour = true;//to make pieces proper colour
     
     /**
-     * Types of commands for use in begin(). Can probably be replaces with a switch between different strings
-     */
-    private static enum Command
-    {
-        invalid, print, move, list, save, load, help, about, exit, 
-    };
-    
-    /**
      * Start accepting user input in an interactive fashion
     */
     public void begin()
@@ -65,7 +57,6 @@ public class CLI
         Scanner input = new Scanner(System.in);
         String enteredLine;
         String commandString = "";
-        Command command;
         
         boolean byeByeSeeYouLater = false;
         
@@ -86,34 +77,31 @@ public class CLI
                 continue;//restart prompt
             }
             
-            try
+            switch (commandString)
             {
-                command = Command.valueOf(commandString);
-            }
-
-            catch (IllegalArgumentException e)
-            {
-                command = Command.invalid;
-            }
-            
-            switch (command)
-            {
-                case print:
+                case "print":
+                case "pr":
+                case "p":
                 {
                     this.printBrd();
                     break;
                 }
-                case move:
+                
+                case "move":
+                case "mv":
+                case "m":
                 {
                     this.move(input);
                     break;
                 }
-                case list:
+                case "list":
+                case "l":
                 {
                     this.list(input);
                     break;
                 }
-                case save:
+                case "save":
+                case "sv":
                 {
                     String filename = input.nextLine();
                     
@@ -122,7 +110,8 @@ public class CLI
                     System.out.println("Save complete!");
                     break;
                 }
-                case load:
+                case "load":
+                case "ld":
                 {
                     String filename = input.nextLine();
                     
@@ -131,22 +120,41 @@ public class CLI
                     System.out.println("Load complete!");
                     break;
                 }
-                case exit:
+                case "exit":
                 {
                     byeByeSeeYouLater = true;
                     break;
                 }
-                case help:
+                case "help":
+                case "h":
+                case "?":
                 {
                     saveTheUserFromHeadaches();
                     break;
                 }
-                case about:
+                case "about":
+                case "cheja":
                 {
                     displayAbout();
                     break;
                 }
-                case invalid:
+                case "hello":
+                case "Hello":
+                case "HELLO":
+                {
+                    //good ol easter egg
+                    try
+                    {
+                        String plzBeThere = input.next();
+                        
+                        if (plzBeThere.equals("there") || plzBeThere.equals("There") || plzBeThere.equals("THERE"))
+                        {
+                            System.out.println("GENERAL KENOBI!");
+                            continue;
+                        }
+                    }
+                    catch (NoSuchElementException e) {}
+                }
                 default:
                 {
                     System.out.println("Invalid command: \"" + commandString + "\"");
@@ -461,13 +469,18 @@ public class CLI
         return Character.toString((char) ('a' + x)) + (8 - y);
     }
     
-    /**
+    //does not make sense to use as returning a "pair" sucks in java. Written in line in list() and move()
+    /*
      * Helper function to convert chess coordinates to board array coordinates. Not implemented yet
      */
-    private static String boardCoordinatesOf(String coordinates)
+    /*
+    private static ??? boardCoordinatesOf(String coordinates)
     {
+        byte fromY = (byte) (7 - (Character.getNumericValue(coordinates.charAt(1)) - 1));//value of 0 to 7 from top
+        byte fromX = (byte) (coordinates.charAt(0) - 'a');//value of 0 to 7
         return "";//placeholder
     }
+    */
     
     /**
      * Print command help text to the screen
