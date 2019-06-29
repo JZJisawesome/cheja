@@ -22,13 +22,24 @@
 */
 package io.github.jzjisawesome.cheja;
 
-public class Board//chess board storage class
+/**
+ * Manages a chess board including piece movement and the status of the game
+ * Throuought the class, coordinates are backwards (y, x) as this makes working with arrays easier.
+ * Also a higher y value represents a lower tile on the board
+ */
+public class Board
 {
-    public static enum PieceType
+    /**
+     * Different types of chess pieces
+     */
+    public static enum PieceType//todo move inside Piece class like MoveType inside of Move
     {
         none, pawn, knight, rook, bishop, queen, king
     };//todo: in future probably faster to replace none pieces with null for speed
     
+    /**
+     * A piece consists of a PieceType, a colour and a whether it has moved yet
+     */
     public static class Piece
     {
         Piece(PieceType t, boolean isW)//constructor
@@ -40,8 +51,12 @@ public class Board//chess board storage class
         //a chess piece is both a certain type and a either black or white
         public PieceType type;
         public boolean isWhite;//should be ignored for the "none" PieceType
+        public boolean hasMoved;//TODO: to be used if casteling as valid and TODO: to more quickly determine if pawn can move two spaces up
     }
             
+    /**
+     * A move consists of two pairs of coordinates and the kind of move it is
+     */
     public static class Move//by convention this class should always contain info about a move that is valid
     {
         public Move(byte fromY, byte fromX, byte toY, byte toX, MoveType moveType)//constructor
@@ -53,6 +68,9 @@ public class Board//chess board storage class
             this.moveType = moveType;
         }
         
+        /**
+         * Different types of moves
+         */
         public static enum MoveType//move function will decide how it will work based on this
         {
             reg, castle,//todo: add other move types
@@ -63,8 +81,11 @@ public class Board//chess board storage class
         public MoveType moveType;//type of move this will be
     }
     
-    //8 by 8 array of pieces
-    //note when accessing this array coordinates are [y][x]
+    /**
+     * A board consists of an 8 by 8 array of pieces.
+     * 
+     * Note: when accessing this array coordinates are [y][x], backwards to normal notation
+     */
     private Piece board[][] =// new Piece[8][8]//fixme ensure dimentions can only be 8 * 8
     {
         {new Piece(PieceType.rook, false), new Piece(PieceType.knight, false), new Piece(PieceType.bishop, false), new Piece(PieceType.queen, false), new Piece(PieceType.king, false), new Piece(PieceType.bishop, false), new Piece(PieceType.knight, false), new Piece(PieceType.rook, false)},
@@ -77,21 +98,35 @@ public class Board//chess board storage class
         {new Piece(PieceType.rook, true), new Piece(PieceType.knight, true), new Piece(PieceType.bishop, true), new Piece(PieceType.queen, true), new Piece(PieceType.king, true), new Piece(PieceType.bishop, true), new Piece(PieceType.knight, true), new Piece(PieceType.rook, true)},
     };
     
-    private boolean whiteTurn = true;//white starts first in chess
+    /**
+     * In chess, the white pieces start first
+     */
+    private boolean whiteTurn = true;
     
     //constructors
-    Board() {}//fixme probably should initilize board array here
+    Board() {}//fixme probably should initilize board array here insted of above
     
     Board(Piece brd[][])//fixme ensure only 8 * 8 sized arrays can be assigned
     {
         this.board = brd;
     }
 
+    /**
+     * Returns a copy of the chess board
+     * @return A copy of the chess board
+     */
     public Piece[][] getBoard()
     {
-        return board;
+        return board;//todo: ensure this is a copy not a pass by refrence
     }
     
+    /**
+     * Returns a copy of a piece at a specific coordinate
+     * @param y The y coordinate
+     * @param x The x coordinate
+     * @return The Piece
+     * @throws IllegalArgumentException If the coordinates are out of bounds
+     */
     public Piece getPiece(int y, int x)
     {
         if ((y <= 7) && (y >= 0) && (x <= 7) && (x >= 0))
@@ -102,28 +137,60 @@ public class Board//chess board storage class
             throw new IllegalArgumentException("coordinates out of bounds");
     }
 
+    /**
+     * Returns if it is whites turn
+     * @return If it is whites turn
+     */
     public boolean isWhiteTurn()
     {
         return whiteTurn;
     }
     
+    /**
+     * Save the board to a file on disk
+     * 
+     * Not functional yet
+     * @param saveFile The file name
+     */
     public void save(String saveFile)
     {
         //placeholder
     }
     
+    /**
+     * Load the board from a file on disk
+     * 
+     * Not functional yet
+     * @param saveFile The file name
+     */
     public void load(String saveFile)
     {
         //placeholder
     }
     
+    /**
+     * Determine if a player has won
+     * 
+     * Not functional yet
+     * @param checkWhite The player colour
+     * @return Whether the player has won or not
+     */
     public boolean hasWon(boolean checkWhite)
     {
         return false;//placeholder
     }
 
-    //can move any piece and follow any Move.MoveType
-    //smart; returns if move was sucessfull
+    /**
+     * Attempts to move a piece from one location to another using the most priortized move type detected in createMove
+     * 
+     * @see createMove
+     * 
+     * @param fromY The y coordinate of the piece
+     * @param fromX The x coordinate of the piece
+     * @param toY The y coordinate of the new location
+     * @param toX The x coordinate of the new location
+     * @return If the move was successfull and valid or not
+     */
     public boolean move(byte fromY, byte fromX, byte toY, byte toX)
     {
         try
@@ -136,8 +203,12 @@ public class Board//chess board storage class
         }
     }
     
-    //can move any piece and follow any Move.MoveType
-    //smart; returns if move was sucessfull
+    /**
+     * Follows the move information defined in a move
+     * 
+     * @param move The Move object to follow
+     * @return True if the move is valid, otherwise false
+     */
     public boolean move(Move move)
     {
         if (this.validMove(move))
@@ -166,6 +237,15 @@ public class Board//chess board storage class
             return false;
     }
     
+    /**
+     * Determines whether one of any kind of move type from one location to another would be valid
+     * 
+     * @param fromY The y coordinate of the piece
+     * @param fromX The x coordinate of the piece
+     * @param toY The y coordinate of the new location
+     * @param toX The x coordinate of the new location
+     * @return Whether at least one kind of move would be valid or not
+     */
     //can be used repititively on all tiles of board to find all valid places to move
     public boolean validMove(byte fromY, byte fromX, byte toY, byte toX)//todo
     {
@@ -178,10 +258,16 @@ public class Board//chess board storage class
         return regMoveValid || castleValid;//as more move types are added, this function will have to check more
     }
     
+    /**
+     * Determine whether the information in a Move object is valid
+     * @param move The move object
+     * @return Whether the move is valid or not
+     */
     //can be used repititively on all tiles of board to find all valid places to move
     public boolean validMove(Move move)//todo
     {
         //note; cannot depend on any other function as almost all others depend on it
+        //only depends of other valid move functions
         
         //to make things easier to read
         byte fromY = move.fromY;
@@ -291,10 +377,24 @@ public class Board//chess board storage class
         return false;//if true was not returned earlier
     }
     
+    /**
+     * Creates a move from the sets of coordinates given in the following priority:
+     * 
+     * Pon upgrade (incomplete), regular, castle
+     * 
+     * @param fromY The y coordinate of the piece
+     * @param fromX The x coordinate of the piece
+     * @param toY The y coordinate of the new location
+     * @param toX The x coordinate of the new location
+     * @return A Move object of how the piece will move
+     * @throws IllegalArgumentException If the coordinates give will produce no type of valid move
+     */
     //will look at 4 coordinates and create a Move, detecting it's type in the process
     //throws exception if move would be invalid
     private Move createMove(byte fromY, byte fromX, byte toY, byte toX)
     {
+        //pawn upgrade first
+        
         Move _regMove = new Move(fromY, fromX, toY, toX, Move.MoveType.reg);//a regular move
         if (this.validMove(_regMove))
         {
@@ -314,13 +414,27 @@ public class Board//chess board storage class
     //private functions
     
     //assumes move would be valid
+    /**
+     * Standard regular move of a piece from one coordinate to another
+     * @param fromY The y coordinate of the piece
+     * @param fromX The x coordinate of the piece
+     * @param toY The y coordinate of the new location
+     * @param toX The x coordinate of the new location
+     */
     private void regMove(byte fromY, byte fromX, byte toY, byte toX)//todo
     {
         this.board[toY][toX] = this.board[fromY][fromX];//copy piece
         this.board[fromY][fromX] = new Piece(PieceType.none, false);//delete original
     }
     
-    //assumes move would be valid
+    //assumes move would be valid and piece is king
+    /**
+     * Casteling move of a king
+     * @param fromY The y coordinate of the king
+     * @param fromX The x coordinate of the king
+     * @param toY The y coordinate of the new location
+     * @param toX The x coordinate of the new location
+     */
     private void castle(byte fromY, byte fromX, byte toY, byte toX)//todo
     {
         //placeholder
@@ -329,6 +443,14 @@ public class Board//chess board storage class
     //individual valilidy checkers for specific pieces and move types
     
     //assumes from coordinates are of a pawn
+    /**
+     * Determines whether the regular movement of a pawn would be valid or not
+     * @param fromY The y coordinate of the pawn
+     * @param fromX The x coordinate of the pawn
+     * @param toY The y coordinate of the new location
+     * @param toX The x coordinate of the new location
+     * @return Whether the movement of the pawn would be valid or not
+     */
     private boolean regPawnMoveValid(byte fromY, byte fromX, byte toY, byte toX)
     {
         Board.Piece fromPiece = this.board[fromY][fromX];
@@ -349,7 +471,7 @@ public class Board//chess board storage class
             else if (toY == fromY - 1 && (fromX - 1 == toX || fromX + 1 == toX) && toPiece.type != PieceType.none)
                 return true;
         }
-        else//everything kind of flips because the the pons move in the opposite direction
+        else//everything kind of flips because the the pawns move in the opposite direction
         {
             //black pawn would be 1 higher than the tile it could move to; in same coloum; piece not in the way
             if (toY == fromY + 1 && toX == fromX && toPiece.type == PieceType.none)
@@ -366,6 +488,14 @@ public class Board//chess board storage class
     }
     
     //assumes from coordinates are of a rook
+    /**
+     * Determines whether the regular movement of a rook would be valid or not
+     * @param fromY The y coordinate of the rook
+     * @param fromX The x coordinate of the rook
+     * @param toY The y coordinate of the new location
+     * @param toX The x coordinate of the new location
+     * @return Whether the movement of the rook would be valid or not
+     */
     private boolean regRookMoveValid(byte fromY, byte fromX, byte toY, byte toX)
     {
         Board.Piece fromPiece = this.board[fromY][fromX];
@@ -431,6 +561,14 @@ public class Board//chess board storage class
     }
     
     //assumes from coordinates are of a bishop
+    /**
+     * Determines whether the regular movement of a bishop would be valid or not
+     * @param fromY The y coordinate of the bishop
+     * @param fromX The x coordinate of the bishop
+     * @param toY The y coordinate of the new location
+     * @param toX The x coordinate of the new location
+     * @return Whether the movement of the bishop would be valid or not
+     */
     private boolean regBishopMoveValid(byte fromY, byte fromX, byte toY, byte toX)
     {
         Board.Piece fromPiece = this.board[fromY][fromX];
@@ -545,6 +683,6 @@ public class Board//chess board storage class
             }
         }
         
-        return false;//if we find the location in our search
+        return false;//if we fail to find the location in our search or the piece is in the same vertical position as the bishop
     }
 }
