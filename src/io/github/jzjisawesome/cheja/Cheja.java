@@ -22,18 +22,28 @@
 */
 package io.github.jzjisawesome.cheja;
 
+/**
+ * A monolithic chess game for the terminal and the desktop: main class
+ */
 public final class Cheja//main program
 {
+    /**
+     * Semantic versioning number for Cheja; helpfull for version tracking
+    */
     public static final String VERSION = "0.0.1";
     
     private static Board board = new Board();//create a new chess board to play
     private static CLI cli = new CLI(board);//to be used later
 
+    /**
+     * The main function. Yep, that's about it
+     * @param args Command line arguments; unused at the moment
+     */
     public static void main(String[] args)
     {
         System.out.println("\t     ♞Cheja♞\n");
         
-        System.out.println("  Note: colours may look reversed\n  if your terminal is dark themed");
+        System.out.println("  Note: colours may look reversed\n  if your terminal is white themed");
         System.out.println();
         
         CLI.printBoard(board);

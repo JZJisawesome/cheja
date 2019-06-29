@@ -25,7 +25,10 @@ package io.github.jzjisawesome.cheja;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
-public class CLI//will eventually take over from main function with actual user interaction
+/**
+ * Terminal frontend for cheja
+ */
+public class CLI
 {
     CLI(Board brd)
     {
@@ -33,6 +36,8 @@ public class CLI//will eventually take over from main function with actual user 
     }
     
     private Board board;
+    
+    private static boolean invertPieceColourByDefault = true;//to make pieces proper colour for black themed terminals
     
     private static enum Command
     {
@@ -140,6 +145,9 @@ public class CLI//will eventually take over from main function with actual user 
         
     public static void printBoard(Board board)
     {
+        //invert the colour of the piece if the boolean in the class is enabled
+        boolean originalClr = !invertPieceColourByDefault;
+        
         System.out.println("   a   b   c   d   e   f   g   h");//print letters for coloums
         System.out.println(" ┏━━━┳━━━┳━━━┳━━━┳━━━┳━━━┳━━━┳━━━┓");//start of the board
         for (int i = 0; i < 8; ++i)//loop for rows
@@ -150,38 +158,42 @@ public class CLI//will eventually take over from main function with actual user 
             {
                 char piece;//stores character to print to represent a chess piece
                 
+                boolean pieceIsWhite = board.getPiece(i, j).isWhite;
+                //invert the colour of the piece if the boolean in the class is enabled
+                boolean displayAsWhite = originalClr ? pieceIsWhite : !pieceIsWhite;
+                
                 //checks type of piece here and varies it depending on its colour later
                 switch (board.getPiece(i, j).type)
                 {
                     case bishop:
                     {
                         //eg.   if white  ................. w else b coloured tile
-                        piece = board.getPiece(i, j).isWhite ? '♗' : '♝';
+                        piece = displayAsWhite ? '♗' : '♝';
                         break;
                     }
                     case king:
                     {
-                        piece = board.getPiece(i, j).isWhite ? '♔' : '♚';
+                        piece = displayAsWhite ? '♔' : '♚';
                         break;
                     }
                     case knight:
                     {
-                        piece = board.getPiece(i, j).isWhite ? '♘' : '♞';
+                        piece = displayAsWhite ? '♘' : '♞';
                         break;
                     }
                     case pawn:
                     {
-                        piece = board.getPiece(i, j).isWhite ? '♙' : '♟';
+                        piece = displayAsWhite ? '♙' : '♟';
                         break;
                     }
                     case queen:
                     {
-                        piece = board.getPiece(i, j).isWhite ? '♕' : '♛';
+                        piece = displayAsWhite ? '♕' : '♛';
                         break;
                     }
                     case rook:
                     {
-                        piece = board.getPiece(i, j).isWhite ? '♖' : '♜';
+                        piece = displayAsWhite ? '♖' : '♜';
                         break;
                     }
                     case none:
@@ -223,6 +235,9 @@ public class CLI//will eventually take over from main function with actual user 
     
     public static void printBoardFlipped(Board board)
     {
+        //invert the colour of the piece if the boolean in the class is enabled
+        boolean originalClr = !invertPieceColourByDefault;
+        
         System.out.println("   h   g   f   e   d   c   b   a");//print letters for coloums
         System.out.println(" ┏━━━┳━━━┳━━━┳━━━┳━━━┳━━━┳━━━┳━━━┓");//start of the board
         for (int i = 7; i >= 0; --i)//loop for rows
@@ -233,38 +248,42 @@ public class CLI//will eventually take over from main function with actual user 
             {
                 char piece;//stores character to print to represent a chess piece
                 
+                boolean pieceIsWhite = board.getPiece(i, j).isWhite;
+                //invert the colour of the piece if the boolean in the class is enabled
+                boolean displayAsWhite = originalClr ? pieceIsWhite : !pieceIsWhite;
+                
                 //checks type of piece here and varies it depending on its colour later
                 switch (board.getPiece(i, j).type)
                 {
                     case bishop:
                     {
                         //eg.   if white  ................. w else b coloured tile
-                        piece = board.getPiece(i, j).isWhite ? '♗' : '♝';
+                        piece = displayAsWhite ? '♗' : '♝';
                         break;
                     }
                     case king:
                     {
-                        piece = board.getPiece(i, j).isWhite ? '♔' : '♚';
+                        piece = displayAsWhite ? '♔' : '♚';
                         break;
                     }
                     case knight:
                     {
-                        piece = board.getPiece(i, j).isWhite ? '♘' : '♞';
+                        piece = displayAsWhite ? '♘' : '♞';
                         break;
                     }
                     case pawn:
                     {
-                        piece = board.getPiece(i, j).isWhite ? '♙' : '♟';
+                        piece = displayAsWhite ? '♙' : '♟';
                         break;
                     }
                     case queen:
                     {
-                        piece = board.getPiece(i, j).isWhite ? '♕' : '♛';
+                        piece = displayAsWhite ? '♕' : '♛';
                         break;
                     }
                     case rook:
                     {
-                        piece = board.getPiece(i, j).isWhite ? '♖' : '♜';
+                        piece = displayAsWhite ? '♖' : '♜';
                         break;
                     }
                     case none:
