@@ -22,6 +22,7 @@
 */
 package io.github.jzjisawesome.cheja;
 
+//for user input
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 

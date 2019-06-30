@@ -49,8 +49,9 @@ public final class Cheja//main program
         CLI.printBoard(board);
         System.out.println();
         
-        cli.begin();
+        cli.begin();//returns when finished
         
+        //exiting
         System.out.println("\nGoodbye!");
     }
     

@@ -22,6 +22,11 @@
 */
 package io.github.jzjisawesome.cheja;
 
+//for saving and loading functions
+import java.util.Scanner;
+import java.io.File;
+import java.io.FileWriter;
+
 /**
  * Manages a chess board including piece movement and the status of the game
  * Throuought the class, coordinates are backwards (y, x) as this makes working with arrays easier.
@@ -127,7 +132,7 @@ public class Board
      * @return The Piece
      * @throws IllegalArgumentException If the coordinates are out of bounds
      */
-    public Piece getPiece(int y, int x)
+    public Piece getPiece(int y, int x) throws IllegalArgumentException
     {
         if ((y <= 7) && (y >= 0) && (x <= 7) && (x >= 0))
         {
@@ -151,10 +156,36 @@ public class Board
      * 
      * Not functional yet
      * @param saveFile The file name
+     * @return Whether the file was saved sucessfully
      */
-    public void save(String saveFile)
+    public boolean save(String saveFile)
     {
-        //placeholder
+        try
+        {
+            //attempt to open file
+            FileWriter fileWriter = new FileWriter(saveFile);
+            
+            //loop through the board array
+            for (int i = 0; i < 8; ++i)//loop for rows
+            {
+                for (int j = 0; j < 8; ++j)//loop for coloums
+                {
+                    Piece currentPiece = this.board[i][j];
+                    
+                    fileWriter.write(currentPiece.type.toString());
+                    fileWriter.write(" ");//space between piece type and colour
+                    fileWriter.write(currentPiece.isWhite ? "w" : "b");
+                    fileWriter.write("\n");//end line
+                }
+            }
+            
+            fileWriter.close();
+            return true;//if everything worked
+        }
+        finally
+        {
+            return false;//if something went wrong
+        }
     }
     
     /**
@@ -162,10 +193,59 @@ public class Board
      * 
      * Not functional yet
      * @param saveFile The file name
+     * @return Whether the file was loaded sucessfully
      */
-    public void load(String saveFile)
+    public boolean load(String saveFile)
     {
-        //placeholder
+        try
+        {
+            //try to open the file
+            //any missing strings during reads will throw exceptions to be caught by finally and return false
+            Scanner fileReader = new Scanner(new File(saveFile));
+            
+            //temporary board
+            Piece temp[][] = new Piece[8][8];
+            
+            //loop through the board array
+            for (int i = 0; i < 8; ++i)//loop for rows
+            {
+                for (int j = 0; j < 8; ++j)//loop for coloums
+                {
+                    //probably could just initalize directly in temp but this is easier to read
+                    Piece newPiece = new Piece(PieceType.none, false);//placeholder to be filled
+                    
+                    newPiece.type = PieceType.valueOf(fileReader.next());//convert string to piece type
+                    
+                    
+                    char colourChar = fileReader.next().charAt(0);//save only the first character from the next string
+                    
+                    //has to be one or the other colour
+                    if (colourChar == 'w' || colourChar == 'b')
+                        newPiece.isWhite = colourChar == 'w';//the piece is white or not
+                    else
+                        return false;
+                    
+                    temp[i][j] = newPiece;//fill in the board
+                }
+            }
+            
+            //todo verify board is valid here
+            
+            //loop through the board array
+            for (int i = 0; i < 8; ++i)//loop for rows
+            {
+                for (int j = 0; j < 8; ++j)//loop for coloums
+                {
+                    this.board[i][j] = temp[i][j];//copy piece from temporary board
+                }
+            }
+            
+            return true;//everything worked
+        }
+        finally
+        {
+            return false;//if something went wrong
+        }
     }
     
     /**
@@ -391,7 +471,7 @@ public class Board
      */
     //will look at 4 coordinates and create a Move, detecting it's type in the process
     //throws exception if move would be invalid
-    private Move createMove(byte fromY, byte fromX, byte toY, byte toX)
+    private Move createMove(byte fromY, byte fromX, byte toY, byte toX) throws IllegalArgumentException
     {
         //pawn upgrade first
         
