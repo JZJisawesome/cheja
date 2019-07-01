@@ -104,21 +104,43 @@ public class CLI
                 case "save":
                 case "sv":
                 {
-                    String filename = input.nextLine();
-                    
-                    System.out.println("Saving board to: \"" + filename + "\"...");
-                    this.board.save(filename);
-                    System.out.println("Save complete!");
+                    try
+                    {
+                        String filename = input.nextLine().substring(1);//cut off initial space but get rest of line
+                        
+                        System.out.println("Saving board to: \"" + filename + "\"...");
+                        if (this.board.save(filename))//attempt to save file
+                            System.out.println("Save complete!");
+                        else
+                            System.out.println("Save failed!");
+                    }
+                    catch (NoSuchElementException e)
+                    {
+                        System.out.println("Invalid syntax");
+                        System.out.println("Type \"help\" for help");
+                    }
+
                     break;
                 }
                 case "load":
                 case "ld":
                 {
-                    String filename = input.nextLine();
+                    try
+                    {
+                        String filename = input.nextLine().substring(1);//cut off initial space but get rest of line
+                        
+                        System.out.println("Loading board from: \"" + filename + "\"...");
+                        if (this.board.load(filename))//attempt to load file
+                            System.out.println("Load complete!");
+                        else
+                            System.out.println("Load failed!");
+                    }
+                    catch (NoSuchElementException e)
+                    {
+                        System.out.println("Invalid syntax");
+                        System.out.println("Type \"help\" for help");
+                    }
                     
-                    System.out.println("Loading board from: \"" + filename + "\"...");
-                    this.board.load(filename);
-                    System.out.println("Load complete!");
                     break;
                 }
                 case "exit":

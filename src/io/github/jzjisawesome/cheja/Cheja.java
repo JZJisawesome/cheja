@@ -43,7 +43,7 @@ public final class Cheja//main program
     {
         System.out.println("\t     ♞Cheja♞\n");
         
-        System.out.println("  Note: colours may look reversed\n  if your terminal is white themed");
+        System.out.println(" Note: colours may look reversed\n  if your terminal is white themed");
         System.out.println();
         
         CLI.printBoard(board);

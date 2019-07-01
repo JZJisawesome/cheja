@@ -182,7 +182,7 @@ public class Board
             fileWriter.close();
             return true;//if everything worked
         }
-        finally
+        catch (Exception e)//just want to catch anything
         {
             return false;//if something went wrong
         }
@@ -242,7 +242,7 @@ public class Board
             
             return true;//everything worked
         }
-        finally
+        catch (Exception e)//just want to catch anything
         {
             return false;//if something went wrong
         }
