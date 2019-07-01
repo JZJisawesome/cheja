@@ -165,6 +165,10 @@ public class Board
             //attempt to open file
             FileWriter fileWriter = new FileWriter(saveFile);
             
+            //write whos turn it is
+            fileWriter.write(this.whiteTurn ? "w" : "b");
+            fileWriter.write("\n");//end line
+            
             //loop through the board array
             for (int i = 0; i < 8; ++i)//loop for rows
             {
@@ -206,6 +210,13 @@ public class Board
             //temporary board
             Piece temp[][] = new Piece[8][8];
             
+            char turnChar = fileReader.next().charAt(0);//save only the first character from the next string
+            
+            if (turnChar == 'w' || turnChar == 'b')//has to be one or the other colour
+                this.whiteTurn = turnChar == 'w';//whites turn or not
+            else
+                return false;//has to be one or the other colour
+            
             //loop through the board array
             for (int i = 0; i < 8; ++i)//loop for rows
             {
@@ -223,7 +234,7 @@ public class Board
                     if (colourChar == 'w' || colourChar == 'b')
                         newPiece.isWhite = colourChar == 'w';//the piece is white or not
                     else
-                        return false;
+                        return false;//has to be one or the other colour
                     
                     temp[i][j] = newPiece;//fill in the board
                 }
