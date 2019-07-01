@@ -362,7 +362,7 @@ public class Board
         byte toY = move.toY;
         byte toX = move.toX;
         
-        if (!((fromY <= 7) && (fromY >= 0) && (fromX <= 7) && (fromX >= 0) && (toY <= 7) && (toY >= 0) && (toX <= 7) && (toX >= 0)))
+        if ( !( (fromY <= 7) && (fromY >= 0) && (fromX <= 7) && (fromX >= 0) && (toY <= 7) && (toY >= 0) && (toX <= 7) && (toX >= 0) ) )
             return false;
         //if the coordinates are in bounds, then we do deeper checks
         

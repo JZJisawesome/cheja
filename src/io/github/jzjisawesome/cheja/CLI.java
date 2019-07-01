@@ -389,22 +389,24 @@ public class CLI
     private void move(Scanner input)
     {
         boolean parseWorked = false;//of both two tokens and individual 
-        String from = null, to = null;//so compiler does not complain about uninitilization
+        //String from = null, to = null;//so compiler does not complain about uninitilization
 
-        if (input.hasNext())
+        if (input.hasNext())//make sure there is another token
         {
-            from = input.next();
+            //get the chess coordinates of the piece's location
+            String pieceCoordinates = input.next();
 
-            if (input.hasNext())
+            if (input.hasNext())//make sure there is another token
             {
-                to = input.next();
+                //get the chess coordinates of the piece's new location
+                String newCoordinates = input.next();
                 
                 try
                 {
-                    byte fromY = (byte) (7 - (Character.getNumericValue(from.charAt(1)) - 1));//value of 0 to 7 from top
-                    byte fromX = (byte) (from.charAt(0) - 'a');//value of 0 to 7
-                    byte toY =   (byte) (7 - (Character.getNumericValue(to.charAt(1)) - 1));//value of 0 to 7 from bottom
-                    byte toX =   (byte) (to.charAt(0) - 'a');//value of 0 to 7
+                    byte fromY = (byte) (7 - (Character.getNumericValue(pieceCoordinates.charAt(1)) - 1));//value of 0 to 7 from top
+                    byte fromX = (byte) (pieceCoordinates.charAt(0) - 'a');//value of 0 to 7
+                    byte toY =   (byte) (7 - (Character.getNumericValue(newCoordinates.charAt(1)) - 1));//value of 0 to 7 from bottom
+                    byte toX =   (byte) (newCoordinates.charAt(0) - 'a');//value of 0 to 7
                     
                     parseWorked = true;
 
@@ -435,18 +437,19 @@ public class CLI
     private void list(Scanner input)
     {
         boolean parseWorked = false;
-        String from;
+        //String pieceCoordinates;
 
-        if (input.hasNext())
+        if (input.hasNext())//make sure there is another token
         {
-            from = input.next();
+            //get the chess coordinates of the piece's location
+            String pieceCoordinates = input.next();
             
             try
             {
-                byte fromY = (byte) (7 - (Character.getNumericValue(from.charAt(1)) - 1));//value of 0 to 7 from top
-                byte fromX = (byte) (from.charAt(0) - 'a');//value of 0 to 7
+                byte fromY = (byte) (7 - (Character.getNumericValue(pieceCoordinates.charAt(1)) - 1));//value of 0 to 7 from top
+                byte fromX = (byte) (pieceCoordinates.charAt(0) - 'a');//value of 0 to 7
 
-                System.out.print("Valid moves from \"" + from + "\" to: ");
+                System.out.print("Valid moves from \"" + pieceCoordinates + "\" to: ");
 
                 //loop through all coordinates to find valid moves
                 for (byte i = 0; i < 8; ++i)//loop for rows
@@ -492,7 +495,7 @@ public class CLI
         return Character.toString((char) ('a' + x)) + (8 - y);
     }
     
-    //does not make sense to use as returning a "pair" sucks in java. Written in line in list() and move()
+    //does not make sense to use as returning a "pair" sucks in java. Written inline in list() and move()
     /*
      * Helper function to convert chess coordinates to board array coordinates. Not implemented yet
      */
@@ -510,7 +513,6 @@ public class CLI
      */
     private static void saveTheUserFromHeadaches()
     {
-        
         System.out.println("\nCommands");
         
         System.out.println("╔══════╦═══════════════════════════════════════════════════╗");
