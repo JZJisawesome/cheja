@@ -169,7 +169,7 @@ public class Board
             fileWriter.write(this.whiteTurn ? "w" : "b");
             fileWriter.write("\n");//end line
             
-            //loop through the board array
+            //loop through the board array to save each piece
             for (int i = 0; i < 8; ++i)//loop for rows
             {
                 for (int j = 0; j < 8; ++j)//loop for coloums
@@ -210,6 +210,7 @@ public class Board
             //temporary board
             Piece temp[][] = new Piece[8][8];
             
+            //load current turn
             char turnChar = fileReader.next().charAt(0);//save only the first character from the next string
             
             if (turnChar == 'w' || turnChar == 'b')//has to be one or the other colour
@@ -217,7 +218,8 @@ public class Board
             else
                 return false;//has to be one or the other colour
             
-            //loop through the board array
+            
+            //loop through the array to load each piece
             for (int i = 0; i < 8; ++i)//loop for rows
             {
                 for (int j = 0; j < 8; ++j)//loop for coloums
@@ -242,14 +244,8 @@ public class Board
             
             //todo verify board is valid here
             
-            //loop through the board array
-            for (int i = 0; i < 8; ++i)//loop for rows
-            {
-                for (int j = 0; j < 8; ++j)//loop for coloums
-                {
-                    this.board[i][j] = temp[i][j];//copy piece from temporary board
-                }
-            }
+            //copy good loaded board to current board
+            this.board = temp;
             
             return true;//everything worked
         }
