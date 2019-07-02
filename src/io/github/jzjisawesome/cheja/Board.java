@@ -409,14 +409,14 @@ public class Board
         if (fromPiece.isWhite != this.whiteTurn)
             return false;//only can move pieces that are yours
         
+        //cannot attack one of your own pieces; ignores the colour of blank tiles as they might be black or white but it is meaningless for them
+        if (toPiece.isWhite == fromPiece.isWhite && toPiece.type != PieceType.none)
+            return false;
+        
         switch (move.moveType)
         {
             case reg:
             {
-                //cannot attack one of your own pieces; ignores the colour of blank tiles as they might be black or white but it is meaningless for them
-                if (toPiece.isWhite == fromPiece.isWhite && toPiece.type != PieceType.none)
-                    return false;//may need to move to the location of the rook when casteling and then recreate the rook elsewhere, so this applies only to regular moves
-                
                 switch (fromPiece.type)
                 {
                     case pawn:
@@ -555,9 +555,20 @@ public class Board
      */
     private void castle(byte fromY, byte fromX, byte toY, byte toX)
     {
-        //placeholder
-        //todo: make sure to indicate pieces that have moved have in Piece.hasMoved
-        //king cannot move back to original position and castle again
+        byte row = fromY;//only diffrence between white and black is the row
+        
+        this.regMove(fromY, fromX, toY, toX);//move king
+        
+        //queen side castle
+        if (toX == 2)
+        {
+            this.regMove(row, (byte) 0, row, (byte) 3);//move rook to right of king
+        }
+        //king side castle
+        else if (toX == 6)
+        {
+            this.regMove(row, (byte) 7, row, (byte) 5);//move rook to left of king
+        }
     }
     
     //individual valilidy checkers for specific pieces and move types
@@ -686,7 +697,7 @@ public class Board
      * 
      * <p>
      * Cascading for loops are not used for the j value. This is because<br>
-     * i and j must increase together, so that the bishop can only move diaganally.<br>
+     * i and j must increase together, so that the bishop can only move diagonally.<br>
      * We must however sill start in the proper position and prevent out of bounds,<br>
      * so the guts of this for loop are spilt into several different locations<br>
      * for each diagonal direction.<br>
@@ -826,7 +837,7 @@ public class Board
                     //a1 is a rook and no pieces at b1 c1 or d1
                     if (this.board[7][0].type == PieceType.rook && this.board[7][1].type == PieceType.none && this.board[7][2].type == PieceType.none && this.board[7][3].type == PieceType.none)
                     {
-                        return !this.board[7][0].hasMoved;//rook must have not moved also
+                        return !this.board[7][0].hasMoved && this.board[7][0].isWhite;//rook must have not moved also and must be white
                     }
                     else
                         return false;
@@ -837,7 +848,7 @@ public class Board
                     //f1 and g1 have no pieces; h1 is a rook
                     if (this.board[7][5].type == PieceType.none && this.board[7][6].type == PieceType.none && this.board[7][7].type == PieceType.rook)
                     {
-                        return !this.board[7][7].hasMoved;//rook must have not moved also
+                        return !this.board[7][7].hasMoved && this.board[7][7].isWhite;//rook must have not moved also and must be white
                     }
                     else
                         return false;
@@ -853,7 +864,7 @@ public class Board
                     //a8 is a rook and no pieces at b8 c8 or d8
                     if (this.board[0][0].type == PieceType.rook && this.board[0][1].type == PieceType.none && this.board[0][2].type == PieceType.none && this.board[0][3].type == PieceType.none)
                     {
-                        return !this.board[0][0].hasMoved;//rook must have not moved also
+                        return !this.board[0][0].hasMoved && !this.board[0][0].isWhite;//rook must have not moved also and must be black
                     }
                     else
                         return false;
@@ -864,7 +875,7 @@ public class Board
                     //f8 and g8 have no pieces; h8 is a rook
                     if (this.board[0][5].type == PieceType.none && this.board[0][6].type == PieceType.none && this.board[0][7].type == PieceType.rook)
                     {
-                        return !this.board[0][7].hasMoved;//rook must have not moved also
+                        return !this.board[0][7].hasMoved && !this.board[0][7].isWhite;//rook must have not moved also and must be black
                     }
                     else
                         return false;
