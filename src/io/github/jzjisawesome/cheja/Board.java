@@ -389,10 +389,11 @@ public class Board
         //note; cannot depend on any other function as almost all others depend on it
         
         //have to check every kind of move with those coordinates to see if one would work
+        boolean pawnUpgradeValid = this.validMove(new Move(fromY, fromX, toY, toX, Move.MoveType.pawn_upgrade));
         boolean regMoveValid = this.validMove(new Move(fromY, fromX, toY, toX, Move.MoveType.reg));
         boolean castleValid = this.validMove(new Move(fromY, fromX, toY, toX, Move.MoveType.castle));
         
-        return regMoveValid || castleValid;//as more move types are added, this function will have to check more
+        return pawnUpgradeValid || regMoveValid || castleValid;//as more move types are added, this function will have to check more
     }
     
     /**
@@ -975,6 +976,7 @@ public class Board
                 if (newType != PieceType.king && newType != PieceType.none)
                 {
                     this.board[y][x].type = newType;//transform the piece
+                    this.inPawnUpgrade = false;//we did it
                     this.whiteTurn = !this.whiteTurn;//finally other person's turn now
                     return true;
                 }
