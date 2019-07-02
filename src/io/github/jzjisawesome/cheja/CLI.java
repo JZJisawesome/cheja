@@ -199,6 +199,9 @@ public class CLI
         //invert the colour of the piece if the boolean in the class is enabled
         boolean originalClr = !invertPieceColour;
         
+        //get a copy of the board array to print out each piece
+        Board.Piece[][] brd = board.getBoard();
+        
         System.out.println("   a   b   c   d   e   f   g   h");//print letters for coloums
         System.out.println(" ┏━━━┳━━━┳━━━┳━━━┳━━━┳━━━┳━━━┳━━━┓");//start of the board
         for (int i = 0; i < 8; ++i)//loop for rows
@@ -209,16 +212,16 @@ public class CLI
             {
                 char piece;//stores character to print to represent a chess piece
                 
-                boolean pieceIsWhite = board.getPiece(i, j).isWhite;
+                boolean pieceIsWhite = brd[i][j].isWhite;
                 //invert the colour of the piece if the boolean in the class is enabled
                 boolean displayAsWhite = originalClr ? pieceIsWhite : !pieceIsWhite;
                 
                 //checks type of piece here and varies it depending on its colour later
-                switch (board.getPiece(i, j).type)
+                switch (brd[i][j].type)
                 {
                     case bishop:
                     {
-                        //eg.   if white  ................. w else b coloured tile
+                        //eg.   if white  ....... w else b coloured tile
                         piece = displayAsWhite ? '♗' : '♝';
                         break;
                     }
@@ -293,6 +296,9 @@ public class CLI
         //invert the colour of the piece if the boolean in the class is enabled
         boolean originalClr = !invertPieceColour;
         
+        //get a copy of the board array to print out each piece
+        Board.Piece[][] brd = board.getBoard();
+        
         System.out.println("   h   g   f   e   d   c   b   a");//print letters for coloums
         System.out.println(" ┏━━━┳━━━┳━━━┳━━━┳━━━┳━━━┳━━━┳━━━┓");//start of the board
         for (int i = 7; i >= 0; --i)//loop for rows
@@ -303,16 +309,16 @@ public class CLI
             {
                 char piece;//stores character to print to represent a chess piece
                 
-                boolean pieceIsWhite = board.getPiece(i, j).isWhite;
+                boolean pieceIsWhite = brd[i][j].isWhite;
                 //invert the colour of the piece if the boolean in the class is enabled
                 boolean displayAsWhite = originalClr ? pieceIsWhite : !pieceIsWhite;
                 
                 //checks type of piece here and varies it depending on its colour later
-                switch (board.getPiece(i, j).type)
+                switch (brd[i][j].type)
                 {
                     case bishop:
                     {
-                        //eg.   if white  ................. w else b coloured tile
+                        //eg.   if white  ....... w else b coloured tile
                         piece = displayAsWhite ? '♗' : '♝';
                         break;
                     }

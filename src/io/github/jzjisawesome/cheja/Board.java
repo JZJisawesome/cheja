@@ -56,7 +56,7 @@ public class Board
         //a chess piece is both a certain type and a either black or white
         public PieceType type;
         public boolean isWhite;//should be ignored for the "none" PieceType
-        public boolean hasMoved;//TODO: to be used if casteling as valid and TODO: to more quickly determine if pawn can move two spaces up
+        public boolean hasMoved = false;//TODO: to be used if casteling as valid and TODO: to more quickly determine if pawn can move two spaces up
     }
             
     /**
@@ -134,7 +134,7 @@ public class Board
      */
     public Piece getPiece(int y, int x) throws IllegalArgumentException
     {
-        if ((y <= 7) && (y >= 0) && (x <= 7) && (x >= 0))
+        if ((y <= 7) && (y >= 0) && (x <= 7) && (x >= 0))//in bounds
         {
             return board[y][x];
         }
@@ -300,16 +300,21 @@ public class Board
     {
         if (this.validMove(move))
         {
+            byte fromY = move.fromY;
+            byte fromX = move.fromX;
+            byte toY = move.toY;
+            byte toX = move.toX;
+            
             switch (move.moveType)
             {
                 case reg:
                 {
-                    this.regMove(move.fromY, move.fromX, move.toY, move.toX);//safty of move already checked at start of function
+                    this.regMove(fromY, fromX, toY, toX);//safty of move already checked at start of function
                     break;//unreachable anaways
                 }
                 case castle:
                 {
-                    this.castle(move.fromY, move.fromX, move.toY, move.toX);//safty of move already checked at start of function
+                    this.castle(fromY, fromX, toY, toX);//safty of move already checked at start of function
                     break;
                     //placeholder
                 }
@@ -334,7 +339,7 @@ public class Board
      * @return Whether at least one kind of move would be valid or not
      */
     //can be used repititively on all tiles of board to find all valid places to move
-    public boolean validMove(byte fromY, byte fromX, byte toY, byte toX)//todo
+    public boolean validMove(byte fromY, byte fromX, byte toY, byte toX)
     {
         //note; cannot depend on any other function as almost all others depend on it
         
@@ -351,7 +356,7 @@ public class Board
      * @return Whether the move is valid or not
      */
     //can be used repititively on all tiles of board to find all valid places to move
-    public boolean validMove(Move move)//todo
+    public boolean validMove(Move move)
     {
         //note; cannot depend on any other function as almost all others depend on it
         //only depends of other valid move functions
@@ -508,10 +513,12 @@ public class Board
      * @param toY The y coordinate of the new location
      * @param toX The x coordinate of the new location
      */
-    private void regMove(byte fromY, byte fromX, byte toY, byte toX)//todo
+    private void regMove(byte fromY, byte fromX, byte toY, byte toX)
     {
         this.board[toY][toX] = this.board[fromY][fromX];//copy piece
         this.board[fromY][fromX] = new Piece(PieceType.none, false);//delete original
+        
+        this.board[toY][toX].hasMoved = true;//piece now in new location has moved
     }
     
     //assumes move would be valid and piece is king
@@ -522,9 +529,10 @@ public class Board
      * @param toY The y coordinate of the new location
      * @param toX The x coordinate of the new location
      */
-    private void castle(byte fromY, byte fromX, byte toY, byte toX)//todo
+    private void castle(byte fromY, byte fromX, byte toY, byte toX)
     {
         //placeholder
+        //todo: make sure to indicate pieces that have moved have in Piece.hasMoved
     }
     
     //individual valilidy checkers for specific pieces and move types
