@@ -179,6 +179,8 @@ public class Board
                     fileWriter.write(currentPiece.type.toString());
                     fileWriter.write(" ");//space between piece type and colour
                     fileWriter.write(currentPiece.isWhite ? "w" : "b");
+                    fileWriter.write(" ");//space between colour and hasMoved
+                    fileWriter.write(currentPiece.hasMoved ? "y" : "n");
                     fileWriter.write("\n");//end line
                 }
             }
@@ -211,10 +213,11 @@ public class Board
             Piece temp[][] = new Piece[8][8];
             
             //load current turn
+            boolean isWhiteTurn;
             char turnChar = fileReader.next().charAt(0);//save only the first character from the next string
             
             if (turnChar == 'w' || turnChar == 'b')//has to be one or the other colour
-                this.whiteTurn = turnChar == 'w';//whites turn or not
+                isWhiteTurn = turnChar == 'w';//whites turn or not
             else
                 return false;//has to be one or the other colour
             
@@ -238,13 +241,23 @@ public class Board
                     else
                         return false;//has to be one or the other colour
                     
+                    char hasMovedChar = fileReader.next().charAt(0);//save only the first character from the next string
+                    
+                    //has to have moved or not
+                    if (hasMovedChar == 'y' || hasMovedChar == 'n')
+                        newPiece.hasMoved = hasMovedChar == 'y';//the piece has moved or not
+                    else
+                        return false;//has to be one or the other
+                    
+                    
                     temp[i][j] = newPiece;//fill in the board
                 }
             }
             
             //todo verify board is valid here
             
-            //copy good loaded board to current board
+            //copy good loaded board to current board and current turn
+            this.whiteTurn = isWhiteTurn;
             this.board = temp;
             
             return true;//everything worked
@@ -472,7 +485,7 @@ public class Board
     /**
      * Creates a move from the sets of coordinates given in the following priority:
      * 
-     * Pon upgrade (incomplete), regular, castle
+     * Pawn upgrade (incomplete), regular, castle
      * 
      * @param fromY The y coordinate of the piece
      * @param fromX The x coordinate of the piece
@@ -533,6 +546,7 @@ public class Board
     {
         //placeholder
         //todo: make sure to indicate pieces that have moved have in Piece.hasMoved
+        //king cannot move back to original position and castle again
     }
     
     //individual valilidy checkers for specific pieces and move types
@@ -560,7 +574,7 @@ public class Board
             if (toY == fromY - 1 && toX == fromX && toPiece.type == PieceType.none)
                 return true;
             //pawn has not moved yet (initial position); wants to move 2 ahead; no piece between from and to; no piece where pawn will move to; in same coloum
-            else if (fromY == 6 && toY == 4 && (this.board[5][fromX].type == PieceType.none) && toPiece.type == PieceType.none && toX == fromX)
+            else if (!fromPiece.hasMoved && toY == 4 && (this.board[5][fromX].type == PieceType.none) && toPiece.type == PieceType.none && toX == fromX)
                 return true;
             //pawn move one row up; pawn will also move one to the left or right; pawn will move onto a tile with a piece on it and capture it
             else if (toY == fromY - 1 && (fromX - 1 == toX || fromX + 1 == toX) && toPiece.type != PieceType.none)
@@ -572,7 +586,7 @@ public class Board
             if (toY == fromY + 1 && toX == fromX && toPiece.type == PieceType.none)
                 return true;
             //pawn has not moved yet (initial position); wants to move 2 ahead; no piece between from and to; no piece where pawn will move to; in same coloum
-            else if (fromY == 1 && toY == 3 && (this.board[2][fromX].type == PieceType.none) && toPiece.type == PieceType.none && toX == fromX)
+            else if (!fromPiece.hasMoved && toY == 3 && (this.board[2][fromX].type == PieceType.none) && toPiece.type == PieceType.none && toX == fromX)
                 return true;
             //pawn move one row up; pawn will also move one to the left or right; pawn will move onto a tile with a piece on it and capture it
             else if (toY == fromY + 1 && (fromX + 1 == toX || fromX - 1 == toX) && toPiece.type != PieceType.none)
@@ -779,5 +793,10 @@ public class Board
         }
         
         return false;//if we fail to find the location in our search or the piece is in the same vertical position as the bishop
+    }
+    
+    private boolean castleValid(byte fromY, byte fromX, byte toY, byte toX)
+    {
+        return false;//placeholder
     }
 }
