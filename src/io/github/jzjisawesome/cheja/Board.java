@@ -818,6 +818,14 @@ public class Board
         return false;//if we fail to find the location in our search or the piece is in the same vertical position as the bishop
     }
     
+    /**
+     * Determines whether a king that is attempting to check would be a valid move or not
+     * @param fromY The y coordinate of the king
+     * @param fromX The x coordinate of the king
+     * @param toY The y coordinate where the king will end up after checking
+     * @param toX The x coordinate where the king will end up after checking
+     * @return Whether the move is valid or not
+     */
     //asssumes it is right turn
     //todo make sure king is not in check before moving
     //todo make sure tiles king would have to cross would are not under attack and would place him in check
@@ -886,5 +894,27 @@ public class Board
         }
         else
             return false;
+    }
+    
+    
+    public boolean inCheck(byte y, byte x)
+    {
+        this.whiteTurn = !this.whiteTurn;//pretend its the other persons turn for the moment
+        
+        //loop through entire board to see if anything can attack the king
+        for (byte i = 0; i < 8; ++i)
+        {
+            for (byte j = 0; j < 8; ++j)
+            {
+                if (this.validMove(i, j, y, x))//a piece can attack the king
+                {
+                    this.whiteTurn = !this.whiteTurn;//put the current turn back
+                    return true;
+                }
+            }
+        }
+        
+        this.whiteTurn = !this.whiteTurn;//put the current turn back
+        return false;//if no threats
     }
 }
