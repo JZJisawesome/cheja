@@ -80,7 +80,7 @@ public class Board
          */
         public static enum MoveType//move function will decide how it will work based on this
         {
-            reg, castle,//todo: add other move types
+            pawn_upgrade, reg, castle,//todo: add other move types
         }
         
         //coordinates to and from
@@ -111,6 +111,16 @@ public class Board
      * In chess, the white pieces start first
      */
     private boolean whiteTurn = true;
+    
+    /**
+     * Currently in the middle of upgrading a pawn to another piece
+     * 
+     * <p>
+     * Cannot move any piece if this is true; must change pawn first
+     * </p>
+     * 
+     */
+    private boolean inPawnUpgrade = false;
     
     //constructors
     Board() {}//fixme probably should initilize board array here insted of above
@@ -347,6 +357,12 @@ public class Board
                     break;
                     //placeholder
                 }
+                case pawn_upgrade:
+                {
+                    this.regMove(fromY, fromX, toY, toX);//safty of move already checked at start of function
+                    inPawnUpgrade = true;
+                    return true;//it's still white's turn; must upgrade pawn now
+                }
                 default:
                     return false;//exit function here if somehow something went wrong
             }
@@ -400,6 +416,9 @@ public class Board
             return false;
         //if the coordinates are in bounds, then we do deeper checks
         
+        if (this.inPawnUpgrade)
+            return false;//we can never move if a pawn in the last or first row has not upgraded yet
+        
         Board.Piece fromPiece = this.board[fromY][fromX];
         Board.Piece toPiece = this.board[toY][toX];
         
@@ -421,7 +440,14 @@ public class Board
                 {
                     case pawn:
                     {
-                        return this.regPawnMoveValid(fromY, fromX, toY, toX);
+                        //regular moves to the first and last row are replaced by pawn upgrades; if a pawn upgrade is valid then a regular is not
+                        if (!(toY == 0 || toY == 7))//if we're not moving to the first or last row
+                        {
+                            return this.regPawnMoveValid(fromY, fromX, toY, toX);//check if a standard pawn move is valid
+                        }
+                        else
+                            return false;
+                        
                         //break;
                     }
                     case king:
@@ -488,6 +514,15 @@ public class Board
                 return this.castleValid(fromY, fromX, toY, toX);
                 //break;
             }
+            case pawn_upgrade:
+            {
+                if (this.regPawnMoveValid(fromY, fromX, toY, toX))
+                {
+                    if (toY == 0 || toY == 7)
+                        return true;//pawn is either moving to top or bottom row; does not need to disguish between colours because they cannot move backwards
+                }
+                break;
+            }
             default:
                 return false;
         }
@@ -498,7 +533,7 @@ public class Board
     /**
      * Creates a move from the sets of coordinates given in the following priority:
      * 
-     * Pawn upgrade (incomplete), regular, castle
+     * Pawn upgrade, regular, castle
      * 
      * @param fromY The y coordinate of the piece
      * @param fromX The x coordinate of the piece
@@ -511,7 +546,11 @@ public class Board
     //throws exception if move would be invalid
     private Move createMove(byte fromY, byte fromX, byte toY, byte toX) throws IllegalArgumentException
     {
-        //pawn upgrade first
+        Move pawnUpgradeMove = new Move(fromY, fromX, toY, toX, Move.MoveType.pawn_upgrade);//pawn upgrade move
+        if (this.validMove(pawnUpgradeMove))
+        {
+            return pawnUpgradeMove;
+        }
         
         Move _regMove = new Move(fromY, fromX, toY, toX, Move.MoveType.reg);//a regular move
         if (this.validMove(_regMove))
@@ -549,7 +588,7 @@ public class Board
     
     //assumes move would be valid and piece is king
     /**
-     * Casteling move of a king
+     * Castling move of a king
      * @param fromY The y coordinate of the king
      * @param fromX The x coordinate of the king
      * @param toY The y coordinate of the new location
@@ -918,5 +957,34 @@ public class Board
         
         this.whiteTurn = !this.whiteTurn;//put the current turn back
         return false;//if no threats
+    }
+    
+    public boolean pawnUpgradeWaiting()
+    {
+        return inPawnUpgrade;
+    }
+    
+    public boolean upgradePawnTo(byte y, byte x, PieceType newType)
+    {
+        if (this.inPawnUpgrade && this.board[y][x].type == PieceType.pawn)
+        {
+            //in first or last row
+            if (y == 0 || y == 7)
+            {
+                //we cant turn into a king or delete the piece
+                if (newType != PieceType.king && newType != PieceType.none)
+                {
+                    this.board[y][x].type = newType;//transform the piece
+                    this.whiteTurn = !this.whiteTurn;//finally other person's turn now
+                    return true;
+                }
+                else
+                    return false;
+            }
+            else
+                return false;
+        }
+        else
+            return false;
     }
 }

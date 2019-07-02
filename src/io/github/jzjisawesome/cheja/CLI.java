@@ -531,10 +531,11 @@ public class CLI
         System.out.println("║print ║Print the chess board to the terminal again.       ║");
         System.out.println("║move  ║Move a piece to another location. (eg. move a2 a3) ║");
         System.out.println("║list  ║List the valid moves of a piece.                   ║");
+        System.out.println("║check ║Determines whether your king is in check or not.   ║");
         System.out.println("║save  ║Save the board to disk.      (eg. save foobar.brd) ║");
         System.out.println("║load  ║Load the board from disk.    (eg. load foobar.brd) ║");
         System.out.println("║help  ║Display information about various cheja commands.  ║");
-        System.out.println("║about ║Display information about cheja itself cheja       ║");
+        System.out.println("║about ║Display information about cheja itself             ║");
         System.out.println("║exit  ║Quit cheja (be sure to save first).                ║");
         System.out.println("╚══════╩═══════════════════════════════════════════════════╝");
     }
