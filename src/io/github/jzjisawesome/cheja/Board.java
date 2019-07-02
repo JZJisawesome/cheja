@@ -29,8 +29,10 @@ import java.io.FileWriter;
 
 /**
  * Manages a chess board including piece movement and the status of the game
- * Throuought the class, coordinates are backwards (y, x) as this makes working with arrays easier.
- * Also a higher y value represents a lower tile on the board
+ * <p>
+ * Throuought the class, coordinates are backwards (y, x) as this makes working with arrays easier.<br>
+ * Also a higher y value represents a lower tile on the board<br>
+ * </p>
  */
 public class Board
 {
@@ -89,7 +91,9 @@ public class Board
     /**
      * A board consists of an 8 by 8 array of pieces.
      * 
+     * <p>
      * Note: when accessing this array coordinates are [y][x], backwards to normal notation
+     * </p>
      */
     private Piece board[][] =// new Piece[8][8]//fixme ensure dimentions can only be 8 * 8
     {
@@ -154,12 +158,19 @@ public class Board
     /**
      * Save the board to a file on disk
      * 
-     * Not functional yet
+     * <p>
+     * File format is as follows<br>
+     * Line 1: "w" or "b" for current turn<br>
+     * Line 2: "piece" which is the name of the enum of the piece | "w" or "b" for colour | "y" or "n" if has moved or not<br>
+     * Line 3-65: repeat the above line for all pieces in first row, then second row and so on<br>
+     * </p>
+     * 
      * @param saveFile The file name
      * @return Whether the file was saved sucessfully
      */
     public boolean save(String saveFile)
     {
+        //standard
         try
         {
             //attempt to open file
@@ -197,7 +208,13 @@ public class Board
     /**
      * Load the board from a file on disk
      * 
-     * Not functional yet
+     * <p>
+     * File format is as follows<br>
+     * Line 1: "w" or "b" for current turn<br>
+     * Line 2: "piece" which is the name of the enum of the piece | "w" or "b" for colour | "y" or "n" if has moved or not<br>
+     * Line 3-65: repeat the above line for all pieces in first row, then second row and so on<br>
+     * </p>
+     * 
      * @param saveFile The file name
      * @return Whether the file was loaded sucessfully
      */
@@ -269,9 +286,8 @@ public class Board
     }
     
     /**
-     * Determine if a player has won
+     * Determine if a player has won: incomplete
      * 
-     * Not functional yet
      * @param checkWhite The player colour
      * @return Whether the player has won or not
      */
@@ -467,13 +483,8 @@ public class Board
             }
             case castle:
             {
-                if (fromPiece.type == PieceType.king)
-                {
-                    //placeholder//make sure the castle with the king will be valid
-                }
-                else
-                    return false;
-                break;
+                return this.castleValid(fromY, fromX, toY, toX);
+                //break;
             }
             default:
                 return false;
@@ -551,7 +562,7 @@ public class Board
     
     //individual valilidy checkers for specific pieces and move types
     
-    //assumes from coordinates are of a pawn
+    //assumes from coordinates are of a pawn and is right turn
     /**
      * Determines whether the regular movement of a pawn would be valid or not
      * @param fromY The y coordinate of the pawn
@@ -596,7 +607,7 @@ public class Board
         return false;//by default
     }
     
-    //assumes from coordinates are of a rook
+    //assumes from coordinates are of a rook and is right turn
     /**
      * Determines whether the regular movement of a rook would be valid or not
      * @param fromY The y coordinate of the rook
@@ -669,9 +680,26 @@ public class Board
         return true;//if there were no pieces in the way
     }
     
-    //assumes from coordinates are of a bishop
+    //assumes from coordinates are of a bishop and is right turn
     /**
      * Determines whether the regular movement of a bishop would be valid or not
+     * 
+     * <p>
+     * Cascading for loops are not used for the j value. This is because<br>
+     * i and j must increase together, so that the bishop can only move diaganally.<br>
+     * We must however sill start in the proper position and prevent out of bounds,<br>
+     * so the guts of this for loop are spilt into several different locations<br>
+     * for each diagonal direction.<br>
+     * <br>
+     * Side note:<br>
+     * This could have been done with significantly less code (both this and<br>
+     * the rook logic) but dividing the search into parts (4 surrounding quadrants)<br>
+     * (eg. toY < fromY && toX < fromX) makes us only have to step in<br>
+     * one diagonal direction, saving time.<br>
+     * Also I did not think about doing all directions with one loop at first,<br>
+     * but hey this is more efficient so yay i guess.<br>
+     * </p>
+     * 
      * @param fromY The y coordinate of the bishop
      * @param fromX The x coordinate of the bishop
      * @param toY The y coordinate of the new location
@@ -682,22 +710,6 @@ public class Board
     {
         Board.Piece fromPiece = this.board[fromY][fromX];
         Board.Piece toPiece = this.board[toY][toX];
-        
-        
-        /* Cascading for loops are not used for the j value. This is because
-         * i and j must increase togeather, so that the bishop can only move diaganolly.
-         * We must however sill start in the proper position and prevent out of bounds,
-         * so the guts of this for loop are spilt into several diffrent locations
-         * for each diagonal direction.
-         *
-         * Side note:
-         * This could have been done with significantly less code (both this and
-         * the rook logic) but dividing the search into parts (4 surronding quadrants)
-         * (eg. toY < fromY && toX < fromX) makes us only have to step in
-         * one diagonal direction, saving time.
-         * Also I did not think about doing all directions with one loop at first,
-         * but hey this is more efficient so yay i guess.
-        */
         
         //location is higher than bishop
         if (toY < fromY)
@@ -795,8 +807,41 @@ public class Board
         return false;//if we fail to find the location in our search or the piece is in the same vertical position as the bishop
     }
     
+    //asssumes it is right turn
+    //todo make sure king is not in check before moving
+    //todo make sure tiles king would have to cross would are not under attack and would place him in check
     private boolean castleValid(byte fromY, byte fromX, byte toY, byte toX)
     {
-        return false;//placeholder
+        Board.Piece fromPiece = this.board[fromY][fromX];
+        Board.Piece toPiece = this.board[toY][toX];
+        
+        //only valid if we're moving a king, in the same row, and king has not moved
+        if (fromPiece.type == PieceType.king && fromY == toY && !fromPiece.hasMoved)
+        {
+            if (fromPiece.isWhite)
+            {
+                //queen side castle
+                if (toX == 2)
+                {
+                    //a1 is a rook and no pieces at b1 c1 or d1
+                    if (this.board[7][0].type == PieceType.rook && this.board[7][1].type == PieceType.none && this.board[7][2].type == PieceType.none && this.board[7][3].type == PieceType.none)
+                    {
+                        return !this.board[7][0].hasMoved;//rook must have not moved also
+                    }
+                    else
+                        return false;
+                }
+                else
+                {
+                    return false;//placeholder
+                }
+            }
+            else
+            {
+                return false;//placeholder
+            }
+        }
+        else
+            return false;
     }
 }
