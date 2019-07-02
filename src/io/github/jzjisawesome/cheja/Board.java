@@ -831,14 +831,46 @@ public class Board
                     else
                         return false;
                 }
-                else
+                //king side castle
+                else if (toX == 6)
                 {
-                    return false;//placeholder
+                    //f1 and g1 have no pieces; h1 is a rook
+                    if (this.board[7][5].type == PieceType.none && this.board[7][6].type == PieceType.none && this.board[7][7].type == PieceType.rook)
+                    {
+                        return !this.board[7][7].hasMoved;//rook must have not moved also
+                    }
+                    else
+                        return false;
                 }
+                else
+                    return false;//no other way to castle
             }
-            else
+            else//piece is black
             {
-                return false;//placeholder
+                //queen side castle
+                if (toX == 2)
+                {
+                    //a8 is a rook and no pieces at b8 c8 or d8
+                    if (this.board[0][0].type == PieceType.rook && this.board[0][1].type == PieceType.none && this.board[0][2].type == PieceType.none && this.board[0][3].type == PieceType.none)
+                    {
+                        return !this.board[0][0].hasMoved;//rook must have not moved also
+                    }
+                    else
+                        return false;
+                }
+                //king side castle
+                else if (toX == 6)
+                {
+                    //f8 and g8 have no pieces; h8 is a rook
+                    if (this.board[0][5].type == PieceType.none && this.board[0][6].type == PieceType.none && this.board[0][7].type == PieceType.rook)
+                    {
+                        return !this.board[0][7].hasMoved;//rook must have not moved also
+                    }
+                    else
+                        return false;
+                }
+                else
+                    return false;//no other way to castle
             }
         }
         else
