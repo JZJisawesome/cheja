@@ -101,6 +101,12 @@ public class CLI
                     this.list(input);
                     break;
                 }
+                case "check":
+                case "c":
+                {
+                    this.isInCheck();
+                    break;
+                }  
                 case "save":
                 case "sv":
                 {
@@ -566,5 +572,39 @@ public class CLI
         System.out.println("║OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE   ║");
         System.out.println("║SOFTWARE.                                                                       ║");
         System.out.println("╚════════════════════════════════════════════════════════════════════════════════╝");
+    }
+    
+    private void isInCheck()
+    {
+        byte y = 0, x = 0;
+        
+        Board.Piece[][] brd = this.board.getBoard();
+        
+        boolean whiteTurn = this.board.isWhiteTurn();
+        
+        //loop through entire board to find king
+        for (byte i = 0; i < 8; ++i)
+        {
+            for (byte j = 0; j < 8; ++j)
+            {
+                //right colour and is a king
+                if (brd[i][j].isWhite == whiteTurn && brd[i][j].type == Board.PieceType.king)
+                {
+                    y = i;
+                    x = j;
+                    
+                    //no need to keep looping, we found the king
+                    i = 8;
+                    j = 8;
+                }
+            }
+        }
+        
+        System.out.print("The king at " + chessCoordinatesOf(y, x) + " ");
+        
+        if (this.board.inCheck(y, x))
+            System.out.println("is in check");
+        else
+            System.out.println("is not in check");
     }
 }

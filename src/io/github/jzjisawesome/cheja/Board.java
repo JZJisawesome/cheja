@@ -373,8 +373,8 @@ public class Board
         //note; cannot depend on any other function as almost all others depend on it
         
         //have to check every kind of move with those coordinates to see if one would work
-        boolean regMoveValid = validMove(new Move(fromY, fromX, toY, toX, Move.MoveType.reg));
-        boolean castleValid = validMove(new Move(fromY, fromX, toY, toX, Move.MoveType.castle));
+        boolean regMoveValid = this.validMove(new Move(fromY, fromX, toY, toX, Move.MoveType.reg));
+        boolean castleValid = this.validMove(new Move(fromY, fromX, toY, toX, Move.MoveType.castle));
         
         return regMoveValid || castleValid;//as more move types are added, this function will have to check more
     }
@@ -459,13 +459,15 @@ public class Board
                     }
                     case rook:
                     {
-                        //start of new rook moving implementation
+                        //start of new rook moving implementation, not working yet but should be better
                         //Moves laterally
+                        /*
                         if ((toY == fromY - 7 || toY == fromY + 7 || toX == fromX - 7 || toX == fromX + 7))
                             return true;
+                        */
                         
-                        //old one to be kept for now until the new one works and is faster
-                        //return this.regRookMoveValid(fromY, fromX, toY, toX);
+                        //old one to be used for now until the new one works
+                        return this.regRookMoveValid(fromY, fromX, toY, toX);
                         //break;
                     }
                     case bishop:
@@ -906,7 +908,7 @@ public class Board
         {
             for (byte j = 0; j < 8; ++j)
             {
-                if (this.validMove(i, j, y, x))//a piece can attack the king
+                if (this.validMove(new Move(i, j, y, x, Move.MoveType.reg)))//a piece can attack the king with a regular move
                 {
                     this.whiteTurn = !this.whiteTurn;//put the current turn back
                     return true;
