@@ -125,7 +125,6 @@ public class Board
     //constructors
     Board() {}//fixme probably should initilize board array here insted of above
     
-    //https://stackoverflow.com/questions/1686425/copy-a-2d-array-in-java
     Board(Board newBoard)
     {
         this.board = new Piece[8][8];
@@ -135,8 +134,8 @@ public class Board
         {
             for (int j = 0; j < 8; ++j)
             {
-                this.board[i][j].type = newBoard.board[i][j].type;
-                this.board[i][j].isWhite = newBoard.board[i][j].isWhite;
+                //copy the piece
+                this.board[i][j] = new Piece(newBoard.board[i][j].type, newBoard.board[i][j].isWhite);
                 this.board[i][j].hasMoved = newBoard.board[i][j].hasMoved;
             }
         }
@@ -401,8 +400,6 @@ public class Board
     //can be used repititively on all tiles of board to find all valid places to move
     public boolean validMove(byte fromY, byte fromX, byte toY, byte toX)
     {
-        //note; cannot depend on any other function as almost all others depend on it
-        
         //have to check every kind of move with those coordinates to see if one would work
         boolean pawnUpgradeValid = this.validMove(new Move(fromY, fromX, toY, toX, Move.MoveType.pawn_upgrade));
         boolean regMoveValid = this.validMove(new Move(fromY, fromX, toY, toX, Move.MoveType.reg));
@@ -413,137 +410,18 @@ public class Board
     
     /**
      * Determine whether the information in a Move object is valid
+     * 
+     * <p>
+     * Also checks for if a move would end in a check
+     * </p>
+     * 
      * @param move The move object
      * @return Whether the move is valid or not
      */
     //can be used repititively on all tiles of board to find all valid places to move
     public boolean validMove(Move move)
     {
-        //note; cannot depend on any other function as almost all others depend on it
-        //only depends of other valid move functions
-        
-        //to make things easier to read
-        byte fromY = move.fromY;
-        byte fromX = move.fromX;
-        byte toY = move.toY;
-        byte toX = move.toX;
-        
-        if ( !( (fromY <= 7) && (fromY >= 0) && (fromX <= 7) && (fromX >= 0) && (toY <= 7) && (toY >= 0) && (toX <= 7) && (toX >= 0) ) )
-            return false;
-        //if the coordinates are in bounds, then we do deeper checks
-        
-        if (this.inPawnUpgrade)
-            return false;//we can never move if a pawn in the last or first row has not upgraded yet
-        
-        Board.Piece fromPiece = this.board[fromY][fromX];
-        Board.Piece toPiece = this.board[toY][toX];
-        
-        if (fromPiece.type == PieceType.none)
-            return false;//cannot move no piece
-        
-        if (fromPiece.isWhite != this.whiteTurn)
-            return false;//only can move pieces that are yours
-        
-        //cannot attack one of your own pieces; ignores the colour of blank tiles as they might be black or white but it is meaningless for them
-        if (toPiece.isWhite == fromPiece.isWhite && toPiece.type != PieceType.none)
-            return false;
-        
-        switch (move.moveType)
-        {
-            case reg:
-            {
-                switch (fromPiece.type)
-                {
-                    case pawn:
-                    {
-                        //regular moves to the first and last row are replaced by pawn upgrades; if a pawn upgrade is valid then a regular is not
-                        if (!(toY == 0 || toY == 7))//if we're not moving to the first or last row
-                        {
-                            return this.regPawnMoveValid(fromY, fromX, toY, toX);//check if a standard pawn move is valid
-                        }
-                        else
-                            return false;
-                        
-                        //break;
-                    }
-                    case king:
-                    {
-                        //king is moving up or down one
-                        if ((toY == fromY - 1 || toY == fromY + 1) && toX == fromX)
-                            return true;
-                        //king is left or right one
-                        else if (toY == fromY && (toX == fromX - 1 || toX == fromX + 1))
-                            return true;
-                        //if king is moving diagonally one
-                        else if ((toY == fromY - 1 || toY == fromY + 1) && (toX == fromX - 1 || toX == fromX + 1 ))
-                            return true;
-                        
-                        break;
-                    }
-                    case queen:
-                    {
-                        //queen can move either like a rook or a bishop
-                        return this.regRookMoveValid(fromY, fromX, toY, toX) ||
-                               this.regBishopMoveValid(fromY, fromX, toY, toX);
-                        //I did not think or-ing the rook and bishop togeather would accually work
-                        //break;
-                    }
-                    case knight:
-                    {
-                        //going two up or down; going one left or right
-                        if ((toY == fromY - 2 || toY == fromY + 2) && (toX == fromX - 1 || toX == fromX + 1 ))
-                            return true;
-                        //going one up or down; going two left or right
-                        else if ((toY == fromY - 1 || toY == fromY + 1) && (toX == fromX - 2 || toX == fromX + 2 ))
-                            return true;
-                        
-                        break;
-                    }
-                    case rook:
-                    {
-                        //start of new rook moving implementation, not working yet but should be better
-                        //Moves laterally
-                        /*
-                        if ((toY == fromY - 7 || toY == fromY + 7 || toX == fromX - 7 || toX == fromX + 7))
-                            return true;
-                        */
-                        
-                        //old one to be used for now until the new one works
-                        return this.regRookMoveValid(fromY, fromX, toY, toX);
-                        //break;
-                    }
-                    case bishop:
-                    {
-                        return this.regBishopMoveValid(fromY, fromX, toY, toX);
-                        //break;
-                    }
-                    case none:
-                    default:
-                    {
-                        return false;
-                    }
-                }
-                break;
-            }
-            case castle:
-            {
-                return this.castleValid(fromY, fromX, toY, toX);
-                //break;
-            }
-            case pawn_upgrade:
-            {
-                if (this.regPawnMoveValid(fromY, fromX, toY, toX))
-                {
-                    if (toY == 0 || toY == 7)
-                        return true;//pawn is either moving to top or bottom row; does not need to disguish between colours because they cannot move backwards
-                }
-                break;
-            }
-            default:
-                return false;
-        }
-        
-        return false;//if true was not returned earlier
+        return validMoveIgnoreCheck(move) && wouldBeInCheck(move);
     }
     
     /**
@@ -963,6 +841,7 @@ public class Board
      */
     public boolean inCheck(byte y, byte x)
     {
+        //fixme should not modify original board, instead make copy and test that
         this.whiteTurn = !this.whiteTurn;//pretend its the other persons turn for the moment
         
         //loop through entire board to see if anything can attack the king
@@ -970,10 +849,13 @@ public class Board
         {
             for (byte j = 0; j < 8; ++j)
             {
-                if (this.validMove(new Move(i, j, y, x, Move.MoveType.reg)))//a piece can attack the king with a regular move
+                //a piece can attack the king with one of these three kinds of moves
+                if (this.validMoveIgnoreCheck(new Move(i, j, y, x, Move.MoveType.reg)) ||
+                    this.validMoveIgnoreCheck(new Move(i, j, y, x, Move.MoveType.castle)) ||
+                    this.validMoveIgnoreCheck(new Move(i, j, y, x, Move.MoveType.pawn_upgrade)))
                 {
                     this.whiteTurn = !this.whiteTurn;//put the current turn back
-                    return true;
+                    return true;//king is in danger
                 }
             }
         }
@@ -1022,11 +904,199 @@ public class Board
         else
             return false;
     }
-    /*
-    private boolean wouldBeInCheck(Move move)
+    
+    
+    private boolean wouldBeInCheck(Move moveToDo)
     {
-        Board testbrd = new Board();
+        Board testbrd = new Board(this);//make a copy of the board to test
+        
+        if (testbrd.validMoveIgnoreCheck(moveToDo))
+            testbrd.moveNoValidation(moveToDo);
+        
+        byte y = 0, x = 0;
+        
+        //loop through entire board to find king
+        for (byte i = 0; i < 8; ++i)
+        {
+            for (byte j = 0; j < 8; ++j)
+            {
+                //right colour and is a king
+                if (testbrd.board[i][j].isWhite == testbrd.whiteTurn && testbrd.board[i][j].type == Board.PieceType.king)
+                {
+                    y = i;
+                    x = j;
+                    
+                    //no need to keep looping, we found the king
+                    i = 8;
+                    j = 8;
+                }
+            }
+        }
+        
+        return testbrd.inCheck(y, x);
     }
     
-    */
+    //completly independent from all functions except other valid move functions
+    //eg regPawnMoveValid, etc, not either of the other "validMove" ones
+    //used in the inCheck function as the this cannot depend on inCheck
+    private boolean validMoveIgnoreCheck(Move move)
+    {
+        //to make things easier to read
+        byte fromY = move.fromY;
+        byte fromX = move.fromX;
+        byte toY = move.toY;
+        byte toX = move.toX;
+        
+        if ( !( (fromY <= 7) && (fromY >= 0) && (fromX <= 7) && (fromX >= 0) && (toY <= 7) && (toY >= 0) && (toX <= 7) && (toX >= 0) ) )
+            return false;
+        //if the coordinates are in bounds, then we do deeper checks
+        
+        if (this.inPawnUpgrade)
+            return false;//we can never move if a pawn in the last or first row has not upgraded yet
+        
+        Board.Piece fromPiece = this.board[fromY][fromX];
+        Board.Piece toPiece = this.board[toY][toX];
+        
+        if (fromPiece.type == PieceType.none)
+            return false;//cannot move no piece
+        
+        if (fromPiece.isWhite != this.whiteTurn)
+            return false;//only can move pieces that are yours
+        
+        //cannot attack one of your own pieces; ignores the colour of blank tiles as they might be black or white but it is meaningless for them
+        if (toPiece.isWhite == fromPiece.isWhite && toPiece.type != PieceType.none)
+            return false;
+        
+        switch (move.moveType)
+        {
+            case reg:
+            {
+                switch (fromPiece.type)
+                {
+                    case pawn:
+                    {
+                        //regular moves to the first and last row are replaced by pawn upgrades; if a pawn upgrade is valid then a regular is not
+                        if (!(toY == 0 || toY == 7))//if we're not moving to the first or last row
+                        {
+                            return this.regPawnMoveValid(fromY, fromX, toY, toX);//check if a standard pawn move is valid
+                        }
+                        else
+                            return false;
+                        
+                        //break;
+                    }
+                    case king:
+                    {
+                        //king is moving up or down one
+                        if ((toY == fromY - 1 || toY == fromY + 1) && toX == fromX)
+                            return true;
+                        //king is left or right one
+                        else if (toY == fromY && (toX == fromX - 1 || toX == fromX + 1))
+                            return true;
+                        //if king is moving diagonally one
+                        else if ((toY == fromY - 1 || toY == fromY + 1) && (toX == fromX - 1 || toX == fromX + 1 ))
+                            return true;
+                        
+                        break;
+                    }
+                    case queen:
+                    {
+                        //queen can move either like a rook or a bishop
+                        return this.regRookMoveValid(fromY, fromX, toY, toX) ||
+                               this.regBishopMoveValid(fromY, fromX, toY, toX);
+                        //I did not think or-ing the rook and bishop togeather would accually work
+                        //break;
+                    }
+                    case knight:
+                    {
+                        //going two up or down; going one left or right
+                        if ((toY == fromY - 2 || toY == fromY + 2) && (toX == fromX - 1 || toX == fromX + 1 ))
+                            return true;
+                        //going one up or down; going two left or right
+                        else if ((toY == fromY - 1 || toY == fromY + 1) && (toX == fromX - 2 || toX == fromX + 2 ))
+                            return true;
+                        
+                        break;
+                    }
+                    case rook:
+                    {
+                        //start of new rook moving implementation, not working yet but should be better
+                        //Moves laterally
+                        /*
+                        if ((toY == fromY - 7 || toY == fromY + 7 || toX == fromX - 7 || toX == fromX + 7))
+                            return true;
+                        */
+                        
+                        //old one to be used for now until the new one works
+                        return this.regRookMoveValid(fromY, fromX, toY, toX);
+                        //break;
+                    }
+                    case bishop:
+                    {
+                        return this.regBishopMoveValid(fromY, fromX, toY, toX);
+                        //break;
+                    }
+                    case none:
+                    default:
+                    {
+                        return false;
+                    }
+                }
+                break;
+            }
+            case castle:
+            {
+                return this.castleValid(fromY, fromX, toY, toX);
+                //break;
+            }
+            case pawn_upgrade:
+            {
+                if (this.regPawnMoveValid(fromY, fromX, toY, toX))
+                {
+                    if (toY == 0 || toY == 7)
+                        return true;//pawn is either moving to top or bottom row; does not need to disguish between colours because they cannot move backwards
+                }
+                break;
+            }
+            default:
+                return false;
+        }
+        
+        return false;//if true was not returned earlier
+    }
+    
+    //does not depend on a valid move at all
+    private boolean moveNoValidation(Move move)
+    {
+        byte fromY = move.fromY;
+        byte fromX = move.fromX;
+        byte toY = move.toY;
+        byte toX = move.toX;
+
+        switch (move.moveType)
+        {
+            case reg:
+            {
+                this.regMove(fromY, fromX, toY, toX);//safty of move already checked at start of function
+                break;//unreachable anaways
+            }
+            case castle:
+            {
+                this.castle(fromY, fromX, toY, toX);//safty of move already checked at start of function
+                break;
+                //placeholder
+            }
+            case pawn_upgrade:
+            {
+                this.regMove(fromY, fromX, toY, toX);//safty of move already checked at start of function
+                inPawnUpgrade = true;
+                return true;//it's still white's turn; must upgrade pawn now
+            }
+            default:
+                return false;//exit function here if somehow something went wrong
+        }
+
+        this.whiteTurn = !this.whiteTurn;//other person's turn now
+        return true;
+    }
 }
