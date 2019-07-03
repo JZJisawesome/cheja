@@ -179,7 +179,7 @@ public class CLI
                         if (plzBeThere.equals("there") || plzBeThere.equals("There") || plzBeThere.equals("THERE"))
                         {
                             System.out.println("GENERAL KENOBI!");
-                            continue;
+                            break;//do not want invalid command to be displayed in this case
                         }
                     }
                     catch (NoSuchElementException e) {}
@@ -428,67 +428,7 @@ public class CLI
                     {
                         this.printBrd();//show movement
                         
-                        while (board.pawnUpgradeWaiting())//keep waiting until we transform the pawn if we need to
-                        {
-                            System.out.println("1. Pawn (leave as is)");
-                            System.out.println("2. Knight");
-                            System.out.println("3. Rook");
-                            System.out.println("4. Bishop");
-                            System.out.println("5. Queen");
-                            System.out.print("Enter a number to choose what to transform the pawn at " + newCoordinates + " into: ");
-
-                            int choice;
-
-                            input = new Scanner(System.in);//reset input
-
-                            //fixme if enter is pressed things break
-                            try
-                            {
-                                choice = Character.getNumericValue(input.nextLine().charAt(0));//blocks until we get something where we convert the first character into a number
-                            }
-                            catch (NoSuchElementException e)
-                            {
-                                continue;//just prompt the user again
-                            }
-
-                            switch (choice)
-                            {
-                                case 1:
-                                {
-                                    board.upgradePawnTo(toY, toX, Board.PieceType.pawn);//leave the pawn at the new location alone; transform complete
-                                    this.printBrd();//show transform
-                                    break;
-                                }
-                                case 2:
-                                {
-                                    board.upgradePawnTo(toY, toX, Board.PieceType.knight);//turn the pawn into a knight; transform complete
-                                    this.printBrd();//show transform
-                                    break;
-                                }
-                                case 3:
-                                {
-                                    board.upgradePawnTo(toY, toX, Board.PieceType.rook);//turn the pawn into a rook; transform complete
-                                    this.printBrd();//show transform
-                                    break;
-                                }
-                                case 4:
-                                {
-                                    board.upgradePawnTo(toY, toX, Board.PieceType.bishop);//turn the pawn into a bishop; transform complete
-                                    this.printBrd();//show transform
-                                    break;
-                                }
-                                case 5:
-                                {
-                                    board.upgradePawnTo(toY, toX, Board.PieceType.queen);//turn the pawn into a queen; transform complete
-                                    this.printBrd();//show transform
-                                    break;
-                                }
-                                default:
-                                {
-                                    continue;//keep looping until we get an answer
-                                }
-                            }
-                        }
+                        handlePawnUpgrade(toY, toX);//may need to upgrade pawn at new location
                     }
                 }
                 catch (StringIndexOutOfBoundsException e)
@@ -671,5 +611,72 @@ public class CLI
             System.out.println("is in check");
         else
             System.out.println("is not in check");
+    }
+    
+    private void handlePawnUpgrade(byte y, byte x)
+    {
+        Scanner input;
+        
+        while (board.pawnUpgradeWaiting())//keep waiting until we transform the pawn if we need to
+        {
+            System.out.println("1. Pawn (leave as is)");
+            System.out.println("2. Knight");
+            System.out.println("3. Rook");
+            System.out.println("4. Bishop");
+            System.out.println("5. Queen");
+            System.out.print("Enter a number to choose what to transform the pawn at " + chessCoordinatesOf(y, x) + " into: ");
+
+            int choice;
+
+            input = new Scanner(System.in);//reset input
+
+            //fixme if enter is pressed things break
+            try
+            {
+                choice = Character.getNumericValue(input.nextLine().charAt(0));//blocks until we get something where we convert the first character into a number
+            }
+            catch (NoSuchElementException e)
+            {
+                continue;//just prompt the user again
+            }
+
+            switch (choice)
+            {
+                case 1:
+                {
+                    board.upgradePawnTo(y, x, Board.PieceType.pawn);//leave the pawn at the new location alone; transform complete
+                    this.printBrd();//show transform
+                    break;
+                }
+                case 2:
+                {
+                    board.upgradePawnTo(y, x, Board.PieceType.knight);//turn the pawn into a knight; transform complete
+                    this.printBrd();//show transform
+                    break;
+                }
+                case 3:
+                {
+                    board.upgradePawnTo(y, x, Board.PieceType.rook);//turn the pawn into a rook; transform complete
+                    this.printBrd();//show transform
+                    break;
+                }
+                case 4:
+                {
+                    board.upgradePawnTo(y, x, Board.PieceType.bishop);//turn the pawn into a bishop; transform complete
+                    this.printBrd();//show transform
+                    break;
+                }
+                case 5:
+                {
+                    board.upgradePawnTo(y, x, Board.PieceType.queen);//turn the pawn into a queen; transform complete
+                    this.printBrd();//show transform
+                    break;
+                }
+                default:
+                {
+                    continue;//keep looping until we get an answer
+                }
+            }
+        }
     }
 }

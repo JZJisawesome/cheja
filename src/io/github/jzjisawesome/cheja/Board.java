@@ -125,9 +125,24 @@ public class Board
     //constructors
     Board() {}//fixme probably should initilize board array here insted of above
     
-    Board(Piece brd[][])//fixme ensure only 8 * 8 sized arrays can be assigned
+    //https://stackoverflow.com/questions/1686425/copy-a-2d-array-in-java
+    Board(Board newBoard)
     {
-        this.board = brd;
+        this.board = new Piece[8][8];
+        
+        //copy board
+        for (int i = 0; i < 8; ++i)
+        {
+            for (int j = 0; j < 8; ++j)
+            {
+                this.board[i][j].type = newBoard.board[i][j].type;
+                this.board[i][j].isWhite = newBoard.board[i][j].isWhite;
+                this.board[i][j].hasMoved = newBoard.board[i][j].hasMoved;
+            }
+        }
+        
+        this.inPawnUpgrade = newBoard.inPawnUpgrade;
+        this.whiteTurn = newBoard.whiteTurn;
     }
 
     /**
@@ -938,7 +953,14 @@ public class Board
             return false;
     }
     
-    
+    //fixme do not depend on validMove so it can depend on this function; otherwise we get bad recursion
+
+    /**
+     *
+     * @param y
+     * @param x
+     * @return
+     */
     public boolean inCheck(byte y, byte x)
     {
         this.whiteTurn = !this.whiteTurn;//pretend its the other persons turn for the moment
@@ -960,11 +982,22 @@ public class Board
         return false;//if no threats
     }
     
+    /**
+     *
+     * @return
+     */
     public boolean pawnUpgradeWaiting()
     {
         return inPawnUpgrade;
     }
     
+    /** Upgrade a pawn to another piece if the pawn reaches the first or last row
+     *
+     * @param y The y coordinate of the pawn
+     * @param x The x coordinate of the pawn
+     * @param newType The piece to upgrade to
+     * @return If the upgrade was sucessfull or not
+     */
     public boolean upgradePawnTo(byte y, byte x, PieceType newType)
     {
         if (this.inPawnUpgrade && this.board[y][x].type == PieceType.pawn)
@@ -989,4 +1022,11 @@ public class Board
         else
             return false;
     }
+    /*
+    private boolean wouldBeInCheck(Move move)
+    {
+        Board testbrd = new Board();
+    }
+    
+    */
 }
