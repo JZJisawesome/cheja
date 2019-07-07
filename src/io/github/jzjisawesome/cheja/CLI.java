@@ -26,13 +26,11 @@ package io.github.jzjisawesome.cheja;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
-/**
- * Terminal frontend for cheja
+/** Terminal frontend for cheja
  */
 public class CLI
 {
-    /**
-     * Constructor that copies a Board object by refrence to use for the game
+    /** Constructor that copies a Board object by refrence to use for the game
      * @param brd The board to use
      */
     CLI(Board brd)
@@ -40,18 +38,15 @@ public class CLI
         this.board = brd;//the board will be copied by refrence, so changes here will be reflected in the original object
     }
     
-    /**
-     * Refrence to board for game
+    /** Refrence to board for game
      */
     private Board board;
     
-    /**
-     * Whether to display black pieces for instead of white and vice-versa for proper colour with dark terminals
+    /** Whether to display black pieces for instead of white and vice-versa for proper colour with dark terminals
      */
     private static boolean invertPieceColour = true;//to make pieces proper colour
     
-    /**
-     * Start accepting user input in an interactive fashion
+    /** Start accepting user input in an interactive fashion
     */
     public void begin()
     {
@@ -196,8 +191,7 @@ public class CLI
         }
     }     
     
-    /**
-     * Print the board to System.out in the same orientation of the board array (black at top, white at bottom)
+    /** Print the board to System.out in the same orientation of the board array (black at top, white at bottom)
      * @param board The board to print
      */
     public static void printBoard(Board board)
@@ -293,8 +287,7 @@ public class CLI
         System.out.println("\t   " + (board.isWhiteTurn() ? "White" : "Black") + "'s turn!");//print who's turn it is
     }
     
-    /**
-     * Print the board to System.out but rotated upside-down from the board array (black at bottom, white at top)
+    /** Print the board to System.out but rotated upside-down from the board array (black at bottom, white at top)
      * @param board The board to print
      */
     public static void printBoardFlipped(Board board)
@@ -392,8 +385,7 @@ public class CLI
     
     //used internally
     
-    /**
-     * Parse input text to find coordinates to move between and move the piece.
+    /** Parse input text to find coordinates to move between and move the piece.
      * 
      * eg. "a2 a3"
      * @param input The input to parse
@@ -446,8 +438,7 @@ public class CLI
     }
         
     //list moves
-    /**
-     * Parses the input for coordinates of a piece and prints all of the valid moves a piece can make
+    /** Parses the input for coordinates of a piece and prints all of the valid moves a piece can make
      * @param input The input to parse
      */
     private void list(Scanner input)
@@ -491,8 +482,7 @@ public class CLI
         }
     }
     
-    /**
-     * Convenience function to print the board oriented for the player that has to move
+    /** Convenience function to print the board oriented for the player that has to move
      */
     private void printBrd()
     {
@@ -503,8 +493,7 @@ public class CLI
     }
     
     //todo error checking
-    /**
-     * Helper function to convert board array coordinates to 
+    /** Helper function to convert board array coordinates to 
      */
     private static String chessCoordinatesOf(byte y, byte x)
     {
@@ -512,8 +501,7 @@ public class CLI
     }
     
     //does not make sense to use as returning a "pair" sucks in java. Written inline in list() and move()
-    /*
-     * Helper function to convert chess coordinates to board array coordinates. Not implemented yet
+    /* Helper function to convert chess coordinates to board array coordinates. Not implemented yet
      */
     /*
     private static ??? boardCoordinatesOf(String coordinates)
@@ -524,8 +512,7 @@ public class CLI
     }
     */
     
-    /**
-     * Print command help text to the screen
+    /** Print command help text to the screen
      */
     private static void saveTheUserFromHeadaches()
     {
@@ -544,8 +531,7 @@ public class CLI
         System.out.println("╚══════╩═══════════════════════════════════════════════════╝");
     }
     
-    /**
-     * Display information about cheja
+    /** Display information about cheja
     */
     private static void displayAbout()
     {
@@ -579,6 +565,8 @@ public class CLI
         System.out.println("╚════════════════════════════════════════════════════════════════════════════════╝");
     }
     
+    /** Looks through the board for the king of the current turn and prints whether it is in check or not
+     */
     private void isInCheck()
     {
         byte y = 0, x = 0;
@@ -613,6 +601,11 @@ public class CLI
             System.out.println("is not in check");
     }
     
+    /** During a pawn upgrade, prompts the user to choose the piece to upgrade to
+     * 
+     * @param y The y coordinate of the pawn
+     * @param x The x coordinate of the pawn
+     */
     private void handlePawnUpgrade(byte y, byte x)
     {
         Scanner input;

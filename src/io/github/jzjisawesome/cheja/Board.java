@@ -27,8 +27,7 @@ import java.util.Scanner;
 import java.io.File;
 import java.io.FileWriter;
 
-/**
- * Manages a chess board including piece movement and the status of the game
+/** Manages a chess board including piece movement and the status of the game
  * <p>
  * Throuought the class, coordinates are backwards (y, x) as this makes working with arrays easier.<br>
  * Also a higher y value represents a lower tile on the board<br>
@@ -36,16 +35,14 @@ import java.io.FileWriter;
  */
 public class Board
 {
-    /**
-     * Different types of chess pieces
+    /** Different types of chess pieces
      */
     public static enum PieceType//todo move inside Piece class like MoveType inside of Move
     {
         none, pawn, knight, rook, bishop, queen, king
     };//todo: in future probably faster to replace none pieces with null for speed
     
-    /**
-     * A piece consists of a PieceType, a colour and a whether it has moved yet
+    /** A piece consists of a PieceType, a colour and a whether it has moved yet
      */
     public static class Piece
     {
@@ -61,8 +58,7 @@ public class Board
         public boolean hasMoved = false;//TODO: to be used if casteling as valid and TODO: to more quickly determine if pawn can move two spaces up
     }
             
-    /**
-     * A move consists of two pairs of coordinates and the kind of move it is
+    /** A move consists of two pairs of coordinates and the kind of move it is
      */
     public static class Move//by convention this class should always contain info about a move that is valid
     {
@@ -75,8 +71,7 @@ public class Board
             this.moveType = moveType;
         }
         
-        /**
-         * Different types of moves
+        /** Different types of moves
          */
         public static enum MoveType//move function will decide how it will work based on this
         {
@@ -88,8 +83,7 @@ public class Board
         public MoveType moveType;//type of move this will be
     }
     
-    /**
-     * A board consists of an 8 by 8 array of pieces.
+    /** A board consists of an 8 by 8 array of pieces.
      * 
      * <p>
      * Note: when accessing this array coordinates are [y][x], backwards to normal notation
@@ -107,13 +101,11 @@ public class Board
         {new Piece(PieceType.rook, true), new Piece(PieceType.knight, true), new Piece(PieceType.bishop, true), new Piece(PieceType.queen, true), new Piece(PieceType.king, true), new Piece(PieceType.bishop, true), new Piece(PieceType.knight, true), new Piece(PieceType.rook, true)},
     };
     
-    /**
-     * In chess, the white pieces start first
+    /** In chess, the white pieces start first
      */
     private boolean whiteTurn = true;
     
-    /**
-     * Currently in the middle of upgrading a pawn to another piece
+    /** Currently in the middle of upgrading a pawn to another piece
      * 
      * <p>
      * Cannot move any piece if this is true; must change pawn first
@@ -144,8 +136,7 @@ public class Board
         this.whiteTurn = newBoard.whiteTurn;
     }
 
-    /**
-     * Returns a copy of the chess board
+    /** Returns a copy of the chess board
      * @return A copy of the chess board
      */
     public Piece[][] getBoard()
@@ -163,11 +154,10 @@ public class Board
             }
         }
         
-        return newBoardArray;//todo: ensure this is a copy not a pass by refrence
+        return newBoardArray;
     }
     
-    /**
-     * Returns a copy of a piece at a specific coordinate
+    /** Returns a copy of a piece at a specific coordinate
      * @param y The y coordinate
      * @param x The x coordinate
      * @return The Piece
@@ -183,8 +173,112 @@ public class Board
             throw new IllegalArgumentException("coordinates out of bounds");
     }
 
+    /** Attempts to move a piece from one location to another using the most priortized move type detected in createMove
+     * 
+     * @see createMove
+     * 
+     * @param fromY The y coordinate of the piece
+     * @param fromX The x coordinate of the piece
+     * @param toY The y coordinate of the new location
+     * @param toX The x coordinate of the new location
+     * @return If the move was successfull and valid or not
+     */
+    public boolean move(byte fromY, byte fromX, byte toY, byte toX)
+    {
+        try
+        {
+            return this.move(this.createMove(fromY, fromX, toY, toX));//create the move type and run the other move overload
+        }
+        catch (IllegalArgumentException e)
+        {
+            return false;
+        }
+    }
+    
+    /** Fllows the move information defined in a move
+     * 
+     * @param move The Move object to follow
+     * @return True if the move is valid, otherwise false
+     */
+    public boolean move(Move move)
+    {
+        if (this.validMove(move))
+        {
+            byte fromY = move.fromY;
+            byte fromX = move.fromX;
+            byte toY = move.toY;
+            byte toX = move.toX;
+            
+            switch (move.moveType)
+            {
+                case reg:
+                {
+                    this.regMove(fromY, fromX, toY, toX);//safty of move already checked at start of function
+                    break;//unreachable anaways
+                }
+                case castle:
+                {
+                    this.castle(fromY, fromX, toY, toX);//safty of move already checked at start of function
+                    break;
+                    //placeholder
+                }
+                case pawn_upgrade:
+                {
+                    this.regMove(fromY, fromX, toY, toX);//safty of move already checked at start of function
+                    inPawnUpgrade = true;
+                    return true;//it's still white's turn; must upgrade pawn now
+                }
+                default:
+                    return false;//exit function here if somehow something went wrong
+            }
+            
+            this.whiteTurn = !this.whiteTurn;//other person's turn now
+            return true;
+        }
+        else
+            return false;
+    }
+    
     /**
-     * Returns if it is whites turn
+     * Determines whether one of any kind of move type from one location to another would be valid
+     * 
+     * @param fromY The y coordinate of the piece
+     * @param fromX The x coordinate of the piece
+     * @param toY The y coordinate of the new location
+     * @param toX The x coordinate of the new location
+     * @return Whether at least one kind of move would be valid or not
+     */
+    //can be used repititively on all tiles of board to find all valid places to move
+    public boolean validMove(byte fromY, byte fromX, byte toY, byte toX)
+    {
+        //have to check every kind of move with those coordinates to see if one would work
+        boolean pawnUpgradeValid = this.validMove(new Move(fromY, fromX, toY, toX, Move.MoveType.pawn_upgrade));
+        boolean regMoveValid = this.validMove(new Move(fromY, fromX, toY, toX, Move.MoveType.reg));
+        boolean castleValid = this.validMove(new Move(fromY, fromX, toY, toX, Move.MoveType.castle));
+        
+        return pawnUpgradeValid || regMoveValid || castleValid;//as more move types are added, this function will have to check more
+    }
+    
+    /**
+     * Determine whether the information in a Move object is valid
+     * 
+     * <p>
+     * Also checks for if a move would end in a check
+     * </p>
+     * 
+     * @param move The move object
+     * @return Whether the move is valid or not
+     */
+    //can be used repititively on all tiles of board to find all valid places to move
+    public boolean validMove(Move move)
+    {
+        if (validMoveIgnoreCheck(move))//if the move is valid otherwise
+            return !wouldBeInCheck(move);//make sure we would not be in check if we did it
+        else
+            return false;//not even valid
+    }
+    
+    /** Returns if it is whites turn
      * @return If it is whites turn
      */
     public boolean isWhiteTurn()
@@ -192,6 +286,57 @@ public class Board
         return whiteTurn;
     }
     
+    /** Determine if a player has won: incomplete
+     * 
+     * @param checkWhite The player colour
+     * @return Whether the player has won or not
+     */
+    public boolean hasWon(boolean checkWhite)
+    {
+        return false;//placeholder
+    }
+    
+    /** Whether a pawn has moved to the last row and is waiting to be upgraded
+     *
+     * @return
+     */
+    public boolean pawnUpgradeWaiting()
+    {
+        return inPawnUpgrade;
+    }
+    
+    /** Upgrade a pawn to another piece if the pawn reaches the first or last row
+     *
+     * @param y The y coordinate of the pawn
+     * @param x The x coordinate of the pawn
+     * @param newType The piece to upgrade to (not none or king)
+     * @return If the upgrade was sucessfull or not
+     */
+    public boolean upgradePawnTo(byte y, byte x, PieceType newType)
+    {
+        if (this.inPawnUpgrade && this.board[y][x].type == PieceType.pawn)
+        {
+            //in first or last row
+            if (y == 0 || y == 7)
+            {
+                //we cant turn into a king or delete the piece
+                if (newType != PieceType.king && newType != PieceType.none)
+                {
+                    this.board[y][x].type = newType;//transform the piece
+                    this.inPawnUpgrade = false;//we did it
+                    this.whiteTurn = !this.whiteTurn;//finally other person's turn now
+                    return true;
+                }
+                else
+                    return false;
+            }
+            else
+                return false;
+        }
+        else
+            return false;
+    }
+        
     /**
      * Save the board to a file on disk
      * 
@@ -326,164 +471,6 @@ public class Board
         }
     }
     
-    /**
-     * Determine if a player has won: incomplete
-     * 
-     * @param checkWhite The player colour
-     * @return Whether the player has won or not
-     */
-    public boolean hasWon(boolean checkWhite)
-    {
-        return false;//placeholder
-    }
-
-    /**
-     * Attempts to move a piece from one location to another using the most priortized move type detected in createMove
-     * 
-     * @see createMove
-     * 
-     * @param fromY The y coordinate of the piece
-     * @param fromX The x coordinate of the piece
-     * @param toY The y coordinate of the new location
-     * @param toX The x coordinate of the new location
-     * @return If the move was successfull and valid or not
-     */
-    public boolean move(byte fromY, byte fromX, byte toY, byte toX)
-    {
-        try
-        {
-            return this.move(this.createMove(fromY, fromX, toY, toX));//create the move type and run the other move overload
-        }
-        catch (IllegalArgumentException e)
-        {
-            return false;
-        }
-    }
-    
-    /**
-     * Follows the move information defined in a move
-     * 
-     * @param move The Move object to follow
-     * @return True if the move is valid, otherwise false
-     */
-    public boolean move(Move move)
-    {
-        if (this.validMove(move))
-        {
-            byte fromY = move.fromY;
-            byte fromX = move.fromX;
-            byte toY = move.toY;
-            byte toX = move.toX;
-            
-            switch (move.moveType)
-            {
-                case reg:
-                {
-                    this.regMove(fromY, fromX, toY, toX);//safty of move already checked at start of function
-                    break;//unreachable anaways
-                }
-                case castle:
-                {
-                    this.castle(fromY, fromX, toY, toX);//safty of move already checked at start of function
-                    break;
-                    //placeholder
-                }
-                case pawn_upgrade:
-                {
-                    this.regMove(fromY, fromX, toY, toX);//safty of move already checked at start of function
-                    inPawnUpgrade = true;
-                    return true;//it's still white's turn; must upgrade pawn now
-                }
-                default:
-                    return false;//exit function here if somehow something went wrong
-            }
-            
-            this.whiteTurn = !this.whiteTurn;//other person's turn now
-            return true;
-        }
-        else
-            return false;
-    }
-    
-    /**
-     * Determines whether one of any kind of move type from one location to another would be valid
-     * 
-     * @param fromY The y coordinate of the piece
-     * @param fromX The x coordinate of the piece
-     * @param toY The y coordinate of the new location
-     * @param toX The x coordinate of the new location
-     * @return Whether at least one kind of move would be valid or not
-     */
-    //can be used repititively on all tiles of board to find all valid places to move
-    public boolean validMove(byte fromY, byte fromX, byte toY, byte toX)
-    {
-        //have to check every kind of move with those coordinates to see if one would work
-        boolean pawnUpgradeValid = this.validMove(new Move(fromY, fromX, toY, toX, Move.MoveType.pawn_upgrade));
-        boolean regMoveValid = this.validMove(new Move(fromY, fromX, toY, toX, Move.MoveType.reg));
-        boolean castleValid = this.validMove(new Move(fromY, fromX, toY, toX, Move.MoveType.castle));
-        
-        return pawnUpgradeValid || regMoveValid || castleValid;//as more move types are added, this function will have to check more
-    }
-    
-    /**
-     * Determine whether the information in a Move object is valid
-     * 
-     * <p>
-     * Also checks for if a move would end in a check
-     * </p>
-     * 
-     * @param move The move object
-     * @return Whether the move is valid or not
-     */
-    //can be used repititively on all tiles of board to find all valid places to move
-    public boolean validMove(Move move)
-    {
-        if (validMoveIgnoreCheck(move))//if the move is valid otherwise
-            return !wouldBeInCheck(move);//make sure we would not be in check if we did it
-        else
-            return false;//not even valid
-    }
-    
-    /** Whether a pawn has moved to the last row and is waiting to be upgraded
-     *
-     * @return
-     */
-    public boolean pawnUpgradeWaiting()
-    {
-        return inPawnUpgrade;
-    }
-    
-    /** Upgrade a pawn to another piece if the pawn reaches the first or last row
-     *
-     * @param y The y coordinate of the pawn
-     * @param x The x coordinate of the pawn
-     * @param newType The piece to upgrade to (not none or king)
-     * @return If the upgrade was sucessfull or not
-     */
-    public boolean upgradePawnTo(byte y, byte x, PieceType newType)
-    {
-        if (this.inPawnUpgrade && this.board[y][x].type == PieceType.pawn)
-        {
-            //in first or last row
-            if (y == 0 || y == 7)
-            {
-                //we cant turn into a king or delete the piece
-                if (newType != PieceType.king && newType != PieceType.none)
-                {
-                    this.board[y][x].type = newType;//transform the piece
-                    this.inPawnUpgrade = false;//we did it
-                    this.whiteTurn = !this.whiteTurn;//finally other person's turn now
-                    return true;
-                }
-                else
-                    return false;
-            }
-            else
-                return false;
-        }
-        else
-            return false;
-    }
     
     /* Private functions below */
     
