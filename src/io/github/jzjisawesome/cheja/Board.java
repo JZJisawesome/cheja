@@ -192,7 +192,7 @@ public class Board
      * @param saveFile The file name
      * @return Whether the file was saved sucessfully
      */
-    public boolean save(String saveFile)
+    public boolean save(String saveFile)//todo disalow saving while in pawn upgrade
     {
         //standard
         try
@@ -834,46 +834,6 @@ public class Board
             return false;
     }
     
-    //fixme do not depend on validMove so it can depend on this function; otherwise we get bad recursion
-
-    /**
-     *
-     * @param y
-     * @param x
-     * @return
-     */
-    public boolean inCheck(byte y, byte x)
-    {
-        if (this.board[y][x].type == PieceType.king && this.board[y][x].isWhite == this.whiteTurn)
-        {
-            //fixme should not modify original board, instead make copy and test that
-            this.whiteTurn = !this.whiteTurn;//pretend its the other persons turn for the moment
-
-            //loop through entire board to see if anything can attack the king
-            for (byte i = 0; i < 8; ++i)
-            {
-                for (byte j = 0; j < 8; ++j)
-                {
-                    //a piece can attack the king with one of these three kinds of moves
-                    if (this.validMoveIgnoreCheck(new Move(i, j, y, x, Move.MoveType.reg)) ||
-                        this.validMoveIgnoreCheck(new Move(i, j, y, x, Move.MoveType.castle)) ||
-                        this.validMoveIgnoreCheck(new Move(i, j, y, x, Move.MoveType.pawn_upgrade)))
-                    {
-                        this.whiteTurn = !this.whiteTurn;//put the current turn back
-                        return true;//king is in danger
-                    }
-                }
-            }
-
-            this.whiteTurn = !this.whiteTurn;//put the current turn back
-            return false;//if no threats
-        }
-        else
-        {
-            throw new IllegalArgumentException("inCheck not king or piece colour != turn colour");
-        }
-    }
-    
     /**
      *
      * @return
@@ -915,7 +875,65 @@ public class Board
             return false;
     }
     
+    /* Functions below do not depend on validMove as validMove will depends on them.
+     * They are used to check if the king is in check which validMove needs to know
+     * in order to prevent a move that would allow a king to remain in check.
+     * As the inCheck function needs to see if any piece could validly move to the location
+     * of the king, it needs a seperate validMoveIgnoreChecking function to see if they can
+     * independent of validMove which would cause a infinite loop of recursion.
+     * Other functions below include a variant of the move function does not validation to avoid validMove and save time,
+     * and wouldBeInCheck which is directly used by validMove and depends on inCheck.
+     * Therefore, the recursion would have had 3 functions: validMove -> wouldBeInCheck -> inCheck -> validMove ...
+     * but this has been avoided as explained above.
+     *
+     * P.S. validMoveIgnoreChecking is also used directly by validMove to reuse code
+     *      and inCheck is also exposed publicly for use in a frontend.
+    */
     
+    /** Determines whether the king of the current turn is in check
+     *
+     * @param y The y coordinate of the king
+     * @param x The x coordinate of the king
+     * @return Whether the king at the coordinates below is in check or not
+     */
+    public boolean inCheck(byte y, byte x)
+    {
+        if (this.board[y][x].type == PieceType.king && this.board[y][x].isWhite == this.whiteTurn)
+        {
+            //fixme should not modify original board, instead make copy and test that
+            this.whiteTurn = !this.whiteTurn;//pretend its the other persons turn for the moment
+
+            //loop through entire board to see if anything can attack the king
+            for (byte i = 0; i < 8; ++i)
+            {
+                for (byte j = 0; j < 8; ++j)
+                {
+                    //a piece can attack the king with one of these three kinds of moves
+                    //we don't want to depend on createMove here
+                    if (this.validMoveIgnoreCheck(new Move(i, j, y, x, Move.MoveType.reg)) ||
+                        this.validMoveIgnoreCheck(new Move(i, j, y, x, Move.MoveType.castle)) ||
+                        this.validMoveIgnoreCheck(new Move(i, j, y, x, Move.MoveType.pawn_upgrade)))
+                    {
+                        this.whiteTurn = !this.whiteTurn;//put the current turn back
+                        return true;//king is in danger
+                    }
+                }
+            }
+
+            this.whiteTurn = !this.whiteTurn;//put the current turn back
+            return false;//if no threats
+        }
+        else
+        {
+            throw new IllegalArgumentException("inCheck not king or piece colour != turn colour");
+        }
+    }
+    
+    /** Determines whether after moving the player who moved's king would be in check
+     * 
+     * @param moveToDo The move to check
+     * @return Whether the move would put/leave the king in check or not
+     */
     private boolean wouldBeInCheck(Move moveToDo)
     {
         Board testbrd = new Board(this);//make a copy of the board to test and not affect the original
@@ -952,9 +970,11 @@ public class Board
         return testbrd.inCheck(y, x);
     }
     
-    //completly independent from all functions except other valid move functions
-    //eg regPawnMoveValid, etc, not either of the other "validMove" ones
-    //used in the inCheck function as the this cannot depend on inCheck
+    /** validMove but independent on inCheck or wouldBeInCheck; see rambly comment above
+     *
+     * @param move The move object
+     * @return Whether the move is valid or not
+    */
     private boolean validMoveIgnoreCheck(Move move)
     {
         //to make things easier to read
@@ -1081,7 +1101,11 @@ public class Board
         return false;//if true was not returned earlier
     }
     
-    //does not depend on a valid move at all
+    /** move() but does not use validMove or even validMoveIgnoreCheck; dangerous
+     * 
+     * @param move The Move object to follow
+     * @return True unless the moveType is somehow not reg, castle, or pawn_upgrade (part of switch statement)
+     */
     private boolean moveNoValidation(Move move)
     {
         byte fromY = move.fromY;
