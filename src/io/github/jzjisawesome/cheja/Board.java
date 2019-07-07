@@ -421,7 +421,10 @@ public class Board
     //can be used repititively on all tiles of board to find all valid places to move
     public boolean validMove(Move move)
     {
-        return validMoveIgnoreCheck(move) && wouldBeInCheck(move);
+        if (validMoveIgnoreCheck(move))//if the move is valid otherwise
+            return !wouldBeInCheck(move);//make sure we would not be in check if we did it
+        else
+            return false;//not even valid
     }
     
     /**
@@ -841,27 +844,34 @@ public class Board
      */
     public boolean inCheck(byte y, byte x)
     {
-        //fixme should not modify original board, instead make copy and test that
-        this.whiteTurn = !this.whiteTurn;//pretend its the other persons turn for the moment
-        
-        //loop through entire board to see if anything can attack the king
-        for (byte i = 0; i < 8; ++i)
+        if (this.board[y][x].type == PieceType.king && this.board[y][x].isWhite == this.whiteTurn)
         {
-            for (byte j = 0; j < 8; ++j)
+            //fixme should not modify original board, instead make copy and test that
+            this.whiteTurn = !this.whiteTurn;//pretend its the other persons turn for the moment
+
+            //loop through entire board to see if anything can attack the king
+            for (byte i = 0; i < 8; ++i)
             {
-                //a piece can attack the king with one of these three kinds of moves
-                if (this.validMoveIgnoreCheck(new Move(i, j, y, x, Move.MoveType.reg)) ||
-                    this.validMoveIgnoreCheck(new Move(i, j, y, x, Move.MoveType.castle)) ||
-                    this.validMoveIgnoreCheck(new Move(i, j, y, x, Move.MoveType.pawn_upgrade)))
+                for (byte j = 0; j < 8; ++j)
                 {
-                    this.whiteTurn = !this.whiteTurn;//put the current turn back
-                    return true;//king is in danger
+                    //a piece can attack the king with one of these three kinds of moves
+                    if (this.validMoveIgnoreCheck(new Move(i, j, y, x, Move.MoveType.reg)) ||
+                        this.validMoveIgnoreCheck(new Move(i, j, y, x, Move.MoveType.castle)) ||
+                        this.validMoveIgnoreCheck(new Move(i, j, y, x, Move.MoveType.pawn_upgrade)))
+                    {
+                        this.whiteTurn = !this.whiteTurn;//put the current turn back
+                        return true;//king is in danger
+                    }
                 }
             }
+
+            this.whiteTurn = !this.whiteTurn;//put the current turn back
+            return false;//if no threats
         }
-        
-        this.whiteTurn = !this.whiteTurn;//put the current turn back
-        return false;//if no threats
+        else
+        {
+            throw new IllegalArgumentException("inCheck not king or piece colour != turn colour");
+        }
     }
     
     /**
@@ -908,10 +918,16 @@ public class Board
     
     private boolean wouldBeInCheck(Move moveToDo)
     {
-        Board testbrd = new Board(this);//make a copy of the board to test
+        Board testbrd = new Board(this);//make a copy of the board to test and not affect the original
         
-        if (testbrd.validMoveIgnoreCheck(moveToDo))
+        if (testbrd.validMoveIgnoreCheck(moveToDo))//this move is valid
             testbrd.moveNoValidation(moveToDo);
+        else
+            throw new IllegalArgumentException("wouldBeInCheck move invalid");
+        
+        //after we move the piece, the turn changes, so change the turn back to the original
+        //as we want to know if our own move will expose our own king
+        testbrd.whiteTurn = !testbrd.whiteTurn;
         
         byte y = 0, x = 0;
         
