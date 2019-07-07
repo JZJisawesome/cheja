@@ -150,7 +150,20 @@ public class Board
      */
     public Piece[][] getBoard()
     {
-        return board;//todo: ensure this is a copy not a pass by refrence
+        Piece[][] newBoardArray = new Piece[8][8];
+                
+        //copy board
+        for (int i = 0; i < 8; ++i)
+        {
+            for (int j = 0; j < 8; ++j)
+            {
+                //create a new piece and copy the members
+                newBoardArray[i][j] = new Piece(this.board[i][j].type, this.board[i][j].isWhite);
+                newBoardArray[i][j].hasMoved = this.board[i][j].hasMoved;
+            }
+        }
+        
+        return newBoardArray;//todo: ensure this is a copy not a pass by refrence
     }
     
     /**
@@ -194,39 +207,43 @@ public class Board
      */
     public boolean save(String saveFile)//todo disalow saving while in pawn upgrade
     {
-        //standard
-        try
+        if (!this.inPawnUpgrade)
         {
-            //attempt to open file
-            FileWriter fileWriter = new FileWriter(saveFile);
-            
-            //write whos turn it is
-            fileWriter.write(this.whiteTurn ? "w" : "b");
-            fileWriter.write("\n");//end line
-            
-            //loop through the board array to save each piece
-            for (int i = 0; i < 8; ++i)//loop for rows
+            try
             {
-                for (int j = 0; j < 8; ++j)//loop for coloums
+                //attempt to open file
+                FileWriter fileWriter = new FileWriter(saveFile);
+
+                //write whos turn it is
+                fileWriter.write(this.whiteTurn ? "w" : "b");
+                fileWriter.write("\n");//end line
+
+                //loop through the board array to save each piece
+                for (int i = 0; i < 8; ++i)//loop for rows
                 {
-                    Piece currentPiece = this.board[i][j];
-                    
-                    fileWriter.write(currentPiece.type.toString());
-                    fileWriter.write(" ");//space between piece type and colour
-                    fileWriter.write(currentPiece.isWhite ? "w" : "b");
-                    fileWriter.write(" ");//space between colour and hasMoved
-                    fileWriter.write(currentPiece.hasMoved ? "y" : "n");
-                    fileWriter.write("\n");//end line
+                    for (int j = 0; j < 8; ++j)//loop for coloums
+                    {
+                        Piece currentPiece = this.board[i][j];
+
+                        fileWriter.write(currentPiece.type.toString());
+                        fileWriter.write(" ");//space between piece type and colour
+                        fileWriter.write(currentPiece.isWhite ? "w" : "b");
+                        fileWriter.write(" ");//space between colour and hasMoved
+                        fileWriter.write(currentPiece.hasMoved ? "y" : "n");
+                        fileWriter.write("\n");//end line
+                    }
                 }
+
+                fileWriter.close();
+                return true;//if everything worked
             }
-            
-            fileWriter.close();
-            return true;//if everything worked
+            catch (Exception e)//just want to catch anything
+            {
+                return false;//if something went wrong
+            }
         }
-        catch (Exception e)//just want to catch anything
-        {
-            return false;//if something went wrong
-        }
+        else
+            return false;
     }
     
     /**
@@ -427,8 +444,51 @@ public class Board
             return false;//not even valid
     }
     
-    /**
-     * Creates a move from the sets of coordinates given in the following priority:
+    /** Whether a pawn has moved to the last row and is waiting to be upgraded
+     *
+     * @return
+     */
+    public boolean pawnUpgradeWaiting()
+    {
+        return inPawnUpgrade;
+    }
+    
+    /** Upgrade a pawn to another piece if the pawn reaches the first or last row
+     *
+     * @param y The y coordinate of the pawn
+     * @param x The x coordinate of the pawn
+     * @param newType The piece to upgrade to (not none or king)
+     * @return If the upgrade was sucessfull or not
+     */
+    public boolean upgradePawnTo(byte y, byte x, PieceType newType)
+    {
+        if (this.inPawnUpgrade && this.board[y][x].type == PieceType.pawn)
+        {
+            //in first or last row
+            if (y == 0 || y == 7)
+            {
+                //we cant turn into a king or delete the piece
+                if (newType != PieceType.king && newType != PieceType.none)
+                {
+                    this.board[y][x].type = newType;//transform the piece
+                    this.inPawnUpgrade = false;//we did it
+                    this.whiteTurn = !this.whiteTurn;//finally other person's turn now
+                    return true;
+                }
+                else
+                    return false;
+            }
+            else
+                return false;
+        }
+        else
+            return false;
+    }
+    
+    /* Private functions below */
+    
+    
+    /** Creates a move from the sets of coordinates given in the following priority:
      * 
      * Pawn upgrade, regular, castle
      * 
@@ -829,47 +889,6 @@ public class Board
                 else
                     return false;//no other way to castle
             }
-        }
-        else
-            return false;
-    }
-    
-    /**
-     *
-     * @return
-     */
-    public boolean pawnUpgradeWaiting()
-    {
-        return inPawnUpgrade;
-    }
-    
-    /** Upgrade a pawn to another piece if the pawn reaches the first or last row
-     *
-     * @param y The y coordinate of the pawn
-     * @param x The x coordinate of the pawn
-     * @param newType The piece to upgrade to
-     * @return If the upgrade was sucessfull or not
-     */
-    public boolean upgradePawnTo(byte y, byte x, PieceType newType)
-    {
-        if (this.inPawnUpgrade && this.board[y][x].type == PieceType.pawn)
-        {
-            //in first or last row
-            if (y == 0 || y == 7)
-            {
-                //we cant turn into a king or delete the piece
-                if (newType != PieceType.king && newType != PieceType.none)
-                {
-                    this.board[y][x].type = newType;//transform the piece
-                    this.inPawnUpgrade = false;//we did it
-                    this.whiteTurn = !this.whiteTurn;//finally other person's turn now
-                    return true;
-                }
-                else
-                    return false;
-            }
-            else
-                return false;
         }
         else
             return false;
